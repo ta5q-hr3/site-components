@@ -1,0 +1,69 @@
+---
+// ScrollProgress.astro
+// 画面右端のスクロール位置表示 デコレーションUI要素
+//    00/NN ーーーー
+
+// 表記内容プロパティを受取る
+interface Props {
+  total: number;
+}
+const { total } = Astro.props;
+---
+
+<div class="psd-progress" aria-hidden="true">
+  <div class="psd-progress__counter">
+    <span id="psd-current-index">01</span>
+    <span class="psd-progress__divider">/</span>
+    <span>{String(total).padStart(2, '0')}</span>
+  </div>
+  <div class="psd-progress__track">
+    <div id="psd-progress-bar" class="psd-progress__bar"></div>
+  </div>
+</div>
+
+<style lang="scss">
+  .psd-progress {
+    position: fixed;
+    right: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    mix-blend-mode: difference; // 背景色に応じて反転するモダン仕様
+    color: #fff;
+
+    &__counter {
+      font-size: 0.875rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      writing-mode: vertical-rl;
+    }
+
+    &__track {
+      width: 2px;
+      height: 120px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 2px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    &__bar {
+      width: 100%;
+      height: 20%;
+      background: #fff;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .psd-progress {
+      right: 1rem;
+    }
+  }
+</style>

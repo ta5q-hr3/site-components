@@ -1,0 +1,40 @@
+---
+// ArticleCard.astro
+
+/**
+ * 次のinterface(オブジェクト=コンテンツデータ)定義のデータを、コンポーネントの読み込み先ファイルから受け取ります。
+ * /data/articles_scrollDeco.ts のデモデータを使用しています。→ このファイルの形式でコンテンツを作成して流し込みができます
+ * 
+ * ※ スタイルは/styles/pageScrollDecoraion.scssにて定義。親.astroファイルのフロントマターでimportしています。
+ */
+
+interface Props {
+  index: number;
+  title: string;
+  subtitle?: string;
+  description: string;
+  bgImage?: string;
+}
+
+const { index, title, subtitle = "SPECIMEN", description, bgImage } = Astro.props;
+---
+
+<article class="psd-article" data-index={index}>
+  {/* 画像指定がある場合にイメージタグを使用してcontainな画像表示を行います */}
+  {bgImage && (
+    <>
+      <img src={bgImage} alt="" class="psd-article__bg-image" />
+      <div class="psd-article__overlay"></div>
+    </>
+  )}
+  
+  <div class="psd-article__container">
+    <div class="psd-article__header">
+      <span class="psd-article__tag">{subtitle} // 0{index}</span>
+      <h2 class="psd-article__title">{title}</h2>
+    </div>
+    <div class="psd-article__body">
+      <p class="psd-article__description">{description}</p>
+    </div>
+  </div>
+</article>

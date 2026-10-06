@@ -1,0 +1,159 @@
+@charset "UTF-8";
+
+/*
+ * Component : pageScrollDecoration's styles
+ */
+
+// カラー設定（保守性を高めるマップ管理）
+// デフォルトのカラーリスト Scssマップ & データ属性で定義しています
+// map-get($article-colors, Num) で呼び出すことができます
+$article-colors: (
+  1: #f9edd9,
+  2: #040619,
+  3: #f7ad69,
+  4: #fafc97,
+  5: #a7e070
+);
+
+.psd-page {
+  position: relative;
+  width: 100%;
+  background-color: map-get($article-colors, 1);
+  color: #111;
+  overflow-x: hidden;
+  font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif;
+}
+
+// 各Articleセクション
+.psd-article {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  will-change: transform;
+
+  // 動的カラー設定（CSS変数との紐付け）
+  @each $key, $color in $article-colors {
+    &[data-index="#{$key}"] {
+      background-color: $color;
+      
+      // 暗い背景（#040619など）のテキスト自動反転対応
+      @if lightness($color) < 40% {
+        color: #f9edd9;
+      } @else {
+        color: #040619;
+      }
+    }
+  }
+
+  // 背景画像レイヤー（アスペクト比を維持して収める）
+  &__bg-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; // アスペクト比を維持して全面カバー
+    object-position: center;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.85; // コンテンツとの視認性を考慮
+    //will-change: transform, filter;
+    transition: filter 0.3s ease;
+  }
+
+  // 背景オーバーレイ（画像の明暗調整用）
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.3) 100%);
+  }
+
+  // メインコンテンツ コンテナ
+  &__container {
+    position: relative;
+    z-index: 3;
+    width: 90%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem;
+    //will-change: transform, opacity, filter;
+    transform-origin: center center;
+  }
+
+  &__header {
+    overflow: hidden; // テキストマスク出現用
+    margin-bottom: 1.5rem;
+  }
+
+  &__tag {
+    font-size: 0.875rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 0.5rem;
+    opacity: 0.8;
+  }
+
+  &__title {
+    font-size: clamp(2.5rem, 6vw, 5.5rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    transform: translateY(100%); // 初期状態：隠す
+  }
+
+  &__body {
+    overflow: hidden;
+    max-width: 600px;
+  }
+
+  &__description {
+    font-size: clamp(1rem, 1.8vw, 1.25rem);
+    line-height: 1.7;
+    opacity: 0; // 初期状態：透明
+    transform: translateY(30px);
+  }
+}
+
+// レスポンシブ微調整
+@media (max-width: 768px) {
+  .psd-article {
+    &__container {
+      padding: 1rem;
+    }
+  }
+}
+
+// ==========================================================
+// カスタムスクロールバー装飾
+// ==========================================================
+
+// Webkit系ブラウザ (Chrome, Safari, Edge)
+::-webkit-scrollbar {
+  width: 6px; // 極細のスタイリッシュな幅
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.03); // 薄いトーン で背景に溶け込ませる
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.25); // サムカラー
+  border-radius: 3px;
+  transition: background 0.3s ease;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.45); // ホバー時は少し濃くする
+  }
+}
+
+// Firefox用
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.25) rgba(0, 0, 0, 0.03);
+}

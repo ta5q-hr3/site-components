@@ -1,0 +1,96 @@
+---
+// /pageScrollDecoration
+
+// Components
+import ArticleCard from "../components/ArticleCard.astro";
+import ScrollProgress from "../components/ScrollProgress.astro";
+// コンテンツデータ
+import { articlesData } from "../data/articles_scrollDeco.ts";
+// CSS
+import '../styles/pageScrollDecoration.scss';
+
+/**
+ * Articles
+ * DOM構築時にオブジェクトを分解してページ内のArticleに適用します
+ 
+const articlesData = [
+  {
+    index: 1,
+    title: "Ethereal Clarity",
+    subtitle: "CONCEPT 01",
+    description: "静寂の中に宿る光と影。ミニマリズムがもたらす新しい視覚体験。",
+    bgImage: "" // 必要に応じて画像パスを記述 (例: "/images/bg-01.jpg")
+  },
+  {
+    index: 2,
+    title: "Cybernetic Void",
+    subtitle: "CONCEPT 02",
+    description: "深淵なる漆黒の空間に浮かび上がる幾何学構造とデジタルな息吹。",
+    bgImage: ""
+  },
+  {
+    index: 3,
+    title: "Warm Horizon",
+    subtitle: "CONCEPT 03",
+    description: "夕刻の色彩が包み込む情感豊かなデザインフィロソフィー。",
+    bgImage: ""
+  },
+  {
+    index: 4,
+    title: "Luminous Pulse",
+    subtitle: "CONCEPT 04",
+    description: "鮮烈な黄色が解き放つインスピレーションと静かな緊張感。",
+    bgImage: ""
+  },
+  {
+    index: 5,
+    title: "Organic Genesis",
+    subtitle: "CONCEPT 05",
+    description: "自然の有機的フォルムとテクノロジーが融合する未来のインターフェース。",
+    bgImage: ""
+  }
+];
+*/
+
+---
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>pageScrollDecoration | Immersive Scroll Experience Components</title>
+</head>
+
+<body>
+<main class="psd-page">
+  {/* 画面右端のスクロール位置(プログレス)表示 デコレーションUI要素 */}
+  <ScrollProgress total={articlesData.length} />
+
+  {/* コンテンツデータを<article>コンポーネントへ展開 */}
+  {articlesData.map((data) => (
+    <ArticleCard
+      index={data.index}
+      title={data.title}
+      subtitle={data.subtitle}
+      description={data.description}
+      bgImage={data.bgImage}
+    />
+  ))}
+</main>
+
+<script>
+// export function initPageScrollDecoration()
+import { initPageScrollDecoration } from '../js/pageScrollDecoration';
+
+document.addEventListener('DOMContentLoaded', () => {
+  initPageScrollDecoration();
+});
+</script>
+</body>
+
+</html>
+
+<style lang="scss">
+body {
+  margin: 0;
+}
+</style>

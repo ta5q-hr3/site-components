@@ -1,0 +1,106 @@
+---
+// Button.astro
+// 共通ボタンコンポーネント
+//
+// Props:
+//   variant: "primary" | "secondary"  ボタン1 / ボタン2 の切り替え
+//   href:    string (optional)        指定時は <a>、未指定なら <button>
+//   type:    "button" | "submit"      href未指定時の button type
+//   label:   string                   ボタンに表示するテキスト
+
+interface Props {
+  variant?: "primary" | "secondary";
+  href?: string;
+  type?: "button" | "submit";
+  label: string;
+}
+
+const { variant = "primary", href, type = "button", label } = Astro.props;
+
+const Tag = href ? "a" : "button";
+---
+
+<Tag
+  class:list={["btn", variant === "primary" ? "btn--primary" : "btn--secondary"]}
+  href={href}
+  type={!href ? type : undefined}
+>
+  <span class="btn__label">{label}</span>
+</Tag>
+
+<style lang="scss">
+  @use "../styles/variables" as *;
+
+  .btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    isolation: isolate;
+
+    padding: space(1.5) space(4); // 12px 32px
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1;
+    text-decoration: none;
+    cursor: pointer;
+
+    border-width: 1px;
+    border-style: solid;
+    border-radius: $radius-sm;
+
+    transition: color 0.3s ease;
+
+    @include sp {
+      padding: space(1.25) space(3); // 10px 24px
+      font-size: 15px;
+    }
+
+    // 下からスライドインするhoverの色面
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-color: $color-text;
+      transform: scaleY(0);
+      transform-origin: bottom;
+      transition: transform 0.35s cubic-bezier(0.65, 0, 0.35, 1);
+      z-index: -1;
+    }
+
+    &:hover::before,
+    &:focus-visible::before {
+      transform: scaleY(1);
+    }
+
+    &:hover .btn__label,
+    &:focus-visible .btn__label {
+      color: $color-bg;
+    }
+  }
+
+  .btn__label {
+    position: relative;
+    transition: color 0.3s ease;
+  }
+
+  .btn--primary {
+    background-color: $color-btn1-bg;
+    border-color: $color-btn1-border;
+
+    .btn__label {
+      color: $color-btn1-text;
+    }
+  }
+
+  .btn--secondary {
+    background-color: $color-btn2-bg;
+    border-color: $color-btn2-border;
+
+    .btn__label {
+      color: $color-btn2-text;
+    }
+  }
+</style>
+

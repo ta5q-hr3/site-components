@@ -1,0 +1,26 @@
+---
+// TOPページにロゴを表示します
+import { Image } from 'astro:assets';
+import logoImg from '../assets/DesignDemo-Logo1.svg';
+
+---
+
+<div id="logo-box" class="logo-box">
+  <Image src={logoImg} alt="Design Demo" class="fv-svg-element" />
+</div>
+
+
+<style lang="scss">
+
+#logo-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 50vh;
+  left:0;
+  width:100vw;
+
+}
+
+</style>

@@ -1,0 +1,84 @@
+---
+// BorderFrame.astro
+// ページ外周の5%内側に配置する装飾枠線
+//
+// Props:
+//   show: boolean  このページで枠線を表示するか(デフォルト true)
+//
+// 挙動:
+//   - ファーストビューのアニメーション進行中は非表示
+//   - アニメーション完了時に発火する "firstview:complete" イベントを
+//     受け取ってフェード表示し、以降は画面に固定(fixed)される
+//   - prefers-reduced-motion 時はアニメーションを待たず即表示
+
+interface Props {
+  show?: boolean;
+}
+
+const { show = true } = Astro.props;
+---
+
+{
+  show && (
+    <div class="border-frame" data-border-frame aria-hidden="true">
+      <div class="border-frame__line" />
+    </div>
+  )
+}
+
+<style lang="scss">
+  @use "../styles/variables" as *;
+
+  .border-frame {
+    position: fixed;
+    inset: 0;
+    z-index: $z-border-frame;
+    pointer-events: none;
+
+    opacity: 0;
+    transition: opacity 0.6s ease;
+
+    &.is-visible {
+      opacity: 1;
+    }
+  }
+
+  .border-frame__line {
+    position: absolute;
+    top: 5%;
+    left: 5%;
+    right: 5%;
+    bottom: 5%;
+
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+  }
+</style>
+
+<!-- Client side script -->
+<script>
+// ファーストビューのアニメーション完了イベントを受けて枠線を表示する。
+// アニメーション実装側は完了時に
+//   document.dispatchEvent(new CustomEvent("firstview:complete"))
+// を発火させること。
+const frame = document.querySelector<HTMLElement>("[data-border-frame]");
+
+if (frame) {
+  const prefersReducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
+
+  if (prefersReducedMotion) {
+    // モーション低減設定時はアニメーションを待たず即表示
+    frame.classList.add("is-visible");
+  } else {
+    document.addEventListener(
+      "firstview:complete",
+      () => {
+        frame.classList.add("is-visible");
+      },
+      { once: true }
+    );
+  }
+}
+</script>

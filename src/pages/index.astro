@@ -1,0 +1,83 @@
+---
+
+import Layout from "../layouts/Layout.astro";
+
+import FirstView from "../components/FirstView.astro";
+import FirstView2nd from "../components/FirstView2nd.astro";
+import TopLogo from "../components/TopLogo.astro";
+import Bigtitle from "../components/BigTitle.astro";
+import InnerFrameContents from "../components/InnerFrameContents.astro";
+import BorderFrame from "../components/BorderFrame.astro";
+import Button from "../components/Button.astro";
+
+// style
+import '../styles/global.scss';
+
+---
+
+<Layout>
+<!-- FirstView / -->
+<FirstView2nd />
+
+<!-- TopLogo / -->
+<Bigtitle data-bigtitle="Site Components" tag="h1"></Bigtitle>
+
+<InnerFrameContents>
+
+<h1>Site Title</h1>
+<article>
+  <section>
+    <h2>Section Title</h2>
+    <Button variant="primary" href="./" type="button" label="SAMPLE" />
+    <p>
+      ここに文章が入ります。ここに文章が入ります。ここに文章が入ります。ここに文章が入ります。
+      ここに文章が入ります。ここに文章が入ります。ここに文章が入ります。
+      ここに文章が入ります。ここに文章が入ります。ここに文章が入ります。ここに文章が入ります。
+      ここに文章が入ります。ここに文章が入ります。ここに文章が入ります。
+    </p>
+  </section>
+  <section>
+    <h2>Section Title</h2>
+    <p>
+      ここに文章が入ります。ここに文章が入ります。ここに文章が入ります。ここに文章が入ります。
+      ここに文章が入ります。ここに文章が入ります。ここに文章が入ります。
+      ここに文章が入ります。ここに文章が入ります。ここに文章が入ります。ここに文章が入ります。
+      ここに文章が入ります。ここに文章が入ります。ここに文章が入ります。
+    </p>
+    <Button variant="secondary" href="./" type="button" label="SAMPLE" />
+  </section>
+</article>
+<article>
+  <section>
+    <h2>Section Title</h2>
+    <p>
+      ここに文章が入ります。ここに文章が入ります。ここに文章が入ります。ここに文章が入ります。
+      ここに文章が入ります。ここに文章が入ります。ここに文章が入ります。
+      ここに文章が入ります。ここに文章が入ります。ここに文章が入ります。ここに文章が入ります。
+      ここに文章が入ります。ここに文章が入ります。ここに文章が入ります。
+    </p>
+    <Button variant="secondary" href="./" type="button" label="SAMPLE" />
+  </section>
+  <section>
+    <h2>Section Title</h2>
+    <p>
+      ここに文章が入ります。ここに文章が入ります。ここに文章が入ります。ここに文章が入ります。
+      ここに文章が入ります。ここに文章が入ります。ここに文章が入ります。
+      ここに文章が入ります。ここに文章が入ります。ここに文章が入ります。ここに文章が入ります。
+      ここに文章が入ります。ここに文章が入ります。ここに文章が入ります。
+    </p>
+    <Button variant="secondary" href="./" type="button" label="SAMPLE" />
+  </section>
+
+</article>
+
+</InnerFrameContents>
+
+<BorderFrame show={true} />
+
+<!--main>
+  <Button variant="primary" href="./" type="button" label="SAMPLE" />
+</main-->
+
+</Layout>
+

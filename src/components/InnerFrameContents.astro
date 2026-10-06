@@ -1,0 +1,56 @@
+---
+// BorderFrame.astro よりも内側にあるコンテンツ
+---
+
+<!-- コンテンツを掲載するエリアを枠線の中に調整します -->
+<main>
+<slot />
+</main>
+
+
+<style lang="scss">
+@use "../styles/variables" as *;
+
+main {
+  display: block;
+  position: absolute;
+    top:0;
+    left:0;
+  width:90%;
+  min-width: 90%;
+  max-height:89%;
+  background: transparent;
+  box-sizing: border-box;
+  overflow: auto;
+  margin-top: 6%;
+  margin-left: 5%;
+  padding-left: 2%;
+  padding-right: 2%;
+  padding-bottom: 2%;
+
+  scroll-behavior: smooth;
+
+  // スクロールバー装飾
+  // ==== 標準仕様 for Firefox... ====
+  scrollbar-width: thin;
+  //scrollbar-color: $color-border transparent;// スクロールハンドルの色  背景(トラック)色
+  scrollbar-color: rgba(240, 112, 13, 0.8) transparent;
+  scrollbar-track-color: transparent;
+  // ==== for webkit (Chrome,Safari,Edge) ====
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 8px;
+  }
+  ::-webkit-scrollbar-thumb {
+    //background: $color-border;
+    background: linear-gradient(to bottom, $color-border, #707070);
+    border-radius: 8px;
+    opacity: 0.6;    
+  }
+}
+
+</style>

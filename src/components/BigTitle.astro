@@ -1,0 +1,96 @@
+---
+/**
+ * 巨大なタイトル
+ */
+
+// コンポーネントの受け取り設定値
+interface Props {
+  'data-bigtitle': string; // タグのタイトル設定値
+  tag?: 'h1' | 'h2' | 'h3' | 'div' | 'section' ; // 可変タグ
+  class?: string; // style(CSS)クラス
+}
+
+const {
+  'data-bigtitle' : bigTitle,
+  tag: tag = 'div',
+  class: className = '',
+  ...rest // 無関係 / 未定義 の属性値を restにまとめてます
+} = Astro.props;
+
+---
+
+<!-- 
+defaultでclass="big-title-container" 付き
+data-bigtitle=""に指定したテキストを表示する
+-->
+
+<tag
+  class:list={['big-title-container', className]}
+  data-bigtitle={bigTitle}
+  {...rest}
+>
+  {/* 巨大テキスト */}
+  <span class="big-title" aria-hidden="true">
+    {bigTitle}
+  </span>
+
+  {/* 前景のメインコンテンツ（必要に応じてスロットで受け取ります） */}
+  <div class="big-title-content">
+    <slot />
+  </div>
+</tag>
+
+<style lang="scss">
+@use "../styles/variables" as *;
+// Google Fonts IBM Plex Sans JP import
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+JP:wght@400;700&display=swap');
+
+
+.big-title-container {
+  position: fixed;
+    top:0;
+    left:0;
+  overflow: hidden;
+  width: 100vw;
+  height: auto;
+  box-sizing: border-box;
+  //padding: 64px 24px;
+  
+  color: $color-text;
+
+  z-index: $z-big-title; // 基本的にはフレームより前、コンテンツより後ろ
+
+  .big-title {
+    position: relative;
+    top: 0;
+    left: 0;
+    //transform: translate(-50%, -50%);
+    
+    // 画面幅に応じたレスポンシブな巨大フォントサイズを設定（12vw〜180px）
+    font-family: "IBM Plex Sans JP", sans-serif;
+    font-size: clamp(80px, 15vw, 200px);
+    font-weight: 700;
+    //font-weight: 900;
+    //letter-spacing: 0.05em;
+    letter-spacing: -0.1em;
+    line-height: 0.8;
+    //white-space: nowrap;
+    // text-transform: uppercase;
+    user-select: none;
+    pointer-events: none;
+
+    // 背景として主張しすぎないよう不透明度を調整（装飾用）
+    //opacity: 0.06;
+    opacity: 0.75;
+    color: $color-text;
+    
+  }
+
+  // 
+  .big-title-content {
+    position: relative;
+    z-index: 2; // 背景テキストより前面に配置
+  }
+}
+
+</style>

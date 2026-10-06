@@ -1,0 +1,63 @@
+// =============================
+// Colors
+// =============================
+$color-bg: #f9edd9;
+$color-text: #040619;
+$color-border: #040619;
+
+$color-btn1-bg: #f7ad69;
+$color-btn1-text: #040619;
+$color-btn1-border: #040619;
+
+$color-btn2-bg: #f9edd9;
+$color-btn2-text: #040619;
+$color-btn2-border: #040619;
+
+$color-code-bg: #2d2e35;
+$color-code-text: #f9edd9;
+
+$color-highlight-1: #f7ad69; // orange
+$color-highlight-2: #fafc97; // yellow
+$color-highlight-3: #a7e070; // green
+
+// =============================
+// Breakpoints
+// =============================
+$breakpoint-sp: 768px;
+
+@mixin sp {
+  //@media (max-width: #{$breakpoint-sp - 1px}) {
+  @media ( width <= $breakpoint-sp ) {
+    @content;
+  }
+}
+
+@mixin pc {
+  //@media (min-width: $breakpoint-sp) {
+  @media ( width > $breakpoint-sp ) {
+    @content;
+  }
+}
+
+// =============================
+// Spacing (8px base unit)
+// =============================
+$space-unit: 8px;
+
+@function space($multiplier) {
+  @return $space-unit * $multiplier;
+}
+
+// =============================
+// Radius
+// =============================
+$radius-sm: 4px;
+$radius-md: 12px;
+
+// =============================
+// Z-index
+// =============================
+$z-border-frame: 1; // 枠線
+$z-big-title: 2; // 巨大文字
+$z-content: 3;
+$z-header: 10;
