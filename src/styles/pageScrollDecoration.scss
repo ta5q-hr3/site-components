@@ -15,6 +15,7 @@ $article-colors: (
   5: #a7e070
 );
 
+// <main class="psd-page">
 .psd-page {
   position: relative;
   width: 100%;
@@ -22,7 +23,33 @@ $article-colors: (
   color: #111;
   overflow-x: hidden;
   font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif;
+
+  // スクロールバーの背景色を動的に制御 : デフォルト色設定
+  //  .psd-pageを取得 → 現在背景色を --scrollbar-track-bgへ移植 → 変数定義値が変わる
+  --scrollbar-track-bg: rgba( 249, 237, 217, 0.3 );
+  --scrollbar-thumb-bg: rgba( 0, 0, 0, 0.25 );
+
 }
+
+// スクロールバーの背景色を動的に制御 : webkit仕様
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  // 上で定義した変数に差し替える
+  background: var(--scrollbar-track-bg);
+  transition: background 0.6s ease;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb-bg);
+  border-radius: 3px;
+  transition: background 0.6s ease;
+
+  &:hover {
+    background: rgba( 0, 0, 0, 0.5 );
+  }
+}
+
 
 // 各Articleセクション
 .psd-article {
@@ -36,7 +63,9 @@ $article-colors: (
   will-change: transform;
 
   // 動的カラー設定（CSS変数との紐付け）
+  // keyの値に属性値が合致するときに、オブジェクト内の対応するプロパティ=$colorを適用する
   @each $key, $color in $article-colors {
+    // data-index属性の値 = number(今のところ1~5) に対応する背景色を設定する
     &[data-index="#{$key}"] {
       background-color: $color;
       
@@ -118,7 +147,7 @@ $article-colors: (
     opacity: 0; // 初期状態：透明
     transform: translateY(30px);
   }
-}
+} // .psd-article
 
 // レスポンシブ微調整
 @media (max-width: 768px) {
@@ -129,9 +158,9 @@ $article-colors: (
   }
 }
 
-// ==========================================================
+// =======================================
 // カスタムスクロールバー装飾
-// ==========================================================
+// =======================================
 
 // Webkit系ブラウザ (Chrome, Safari, Edge)
 ::-webkit-scrollbar {
@@ -157,3 +186,5 @@ $article-colors: (
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.25) rgba(0, 0, 0, 0.03);
 }
+
+
