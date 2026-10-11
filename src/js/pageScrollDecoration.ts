@@ -10,7 +10,9 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-
+/** -----------------------------
+ * Exported main method
+ * ------------------------------ */
 export function initPageScrollDecoration() {
 
 
@@ -21,12 +23,37 @@ if (articles.length === 0) return;// コンテンツがなければ停止
 // <main class="psd-page">
 const pageContainer = document.querySelector('.psd-page') as HTMLElement | null;
 
+// 画面の高さを取得する
+const windowHeight = window.innerHeight;
 
-// ------------------------------
-// スクロール状態に合わせて実行するメソッド
-// ------------------------------
+
+// ---------------------------------------------------
+// スクロール状態に合わせて実行するメソッド群
+// ---------------------------------------------------
+
+// ==== コンテンツ量が<article>から溢れるラッパーの overflow分を取得する ====
+const getOverflowHeight = ( container: HTMLElement | null ) => {
+  if (!container) return 0;
+  const containerHeight = container.offsetHeight;// border,paddingを含む高さ
+  //return containerHeight > windowHeight ? containerHeight - windowHeight + 100 : 0;// overflowがある場合はその幅(=差分)を返す
+  return containerHeight > windowHeight ? containerHeight - windowHeight : 0;// overflowがある場合はその幅(=差分)を返す
+}
+
+// ==== ScrollTriggerのピン留め間隔を動的に指定する ====
+// 各 <article> の実際の高さ（offsetHeight）を取得し、画面の高さ（window.innerHeight）を超えている場合は、その差分だけピン留め（pin）のスクロール量を動的に加算・延長する
+// ... 最後のブロックに演出/プログレスが適用されない問題への対処
+const getPinDuration = ( article:HTMLElement ) => {
+  const articleHeight = article.offsetHeight;// border,paddingを含むHTML要素の高さ number
+  // コンテンツの高さが画面の高さを超えている場合、溢れている分のスクロール領域を延長する
+  if ( articleHeight > windowHeight) {
+    return `+=${articleHeight}`;
+  }
+  return '+=100%';// 画面内に収まる場合は画面と同じ高さ
+};
+
 // ==== プログレスインジケーターの更新処理 ====
-function updateProgress(currentIndex: number) {
+// globalProgress : <main class="psd-page">のスクロール量 %  0.0 ~ 1.0
+function updateProgress( currentIndex: number, globalProgress: number) {
   const currentEl = document.getElementById('psd-current-index');
   const progressBar = document.getElementById('psd-progress-bar');
   
@@ -34,17 +61,38 @@ function updateProgress(currentIndex: number) {
     currentEl.textContent = String(currentIndex).padStart(2, '0');
   }
   if (progressBar) {
-    const progressPercent = (currentIndex / articles.length) * 100;
-    gsap.to(progressBar, { height: `${progressPercent}%`, duration: 0.4 });
+    // スクロール最下部にさしかかったら 100% へ (演出のおかげで最下段までスクロールできないので)
+    let calcPercent = globalProgress * 100;
+    if ( globalProgress >= 0.96 ) { // 96%以上スクロールしたら...
+      calcPercent = 100;// 強制的にMAX 100% にします
+    }
+    // percentの値を 0 以上、 100 以下 に しています
+    const percent = Math.min( Math.max(calcPercent,0), 100 );
+    // プログレス表示=バーの長さ をページ全体のスクロール量(0%~100%)に合わせて 追従させる
+    /*
+    const percent = Math.min(
+      Math.max( globalProgress * 100, ( 1 / articles.length ) * 100 ),
+      100
+    );
+    */
+    //const progressPercent = (currentIndex / articles.length) * 100;
+    gsap.to( progressBar, {
+      height: `${percent}%`,
+      duration: 0.2,
+      ease: 'power1.out',
+      overwrite: 'auto'
+    });
+    //gsap.to(progressBar, { height: `${progressPercent}%`, duration: 0.4, overwrite: 'auto' });
   }
 }
+
 // ==== 表示中<article>の背景色をスクロールバートラックに反映する ====
 function updateScrollbarColor( currentArticle: HTMLElement ) {
   // 主コンテンツブロック <main> がない時は実行しない
   if (!pageContainer) return;
-  // 引数の<article>に適用されている背景色 computed style の取得
-  const computedBgColor = window.getComputedStyle(currentArticle).backgroundColor;
+  // 引数の<article>に適用されている背景色 computed style の取得して
   // CSS変数 : --scrollbar-track-bg  へ背景色を移植する
+  const computedBgColor = window.getComputedStyle(currentArticle).backgroundColor;
   pageContainer.style.setProperty( '--scrollbar-track-bg', computedBgColor );
 
   // 明るい背景(Ex.#040619)の場合に thumb を色調反転させて視認性確保
@@ -54,7 +102,7 @@ function updateScrollbarColor( currentArticle: HTMLElement ) {
   const rgbMatch = computedBgColor.match(/\d+/g);
   //  正規表現マッチが空でなく、3要素以上の結果が返る
   if ( rgbMatch && rgbMatch.length >= 3 ) {
-    // 10進数への変換が必要?
+    // 10進数への変換
     const R = parseInt( rgbMatch[0], 10 );
     const G = parseInt( rgbMatch[1], 10 );
     const B = parseInt( rgbMatch[2], 10 );
@@ -75,19 +123,45 @@ function updateScrollbarColor( currentArticle: HTMLElement ) {
   }
 
 }// updateScrollbarColor()
+// ---------------------------------------------------
+
 
 
 // 各<article>要素にスクロール演出イベントを設置する
-// <article>が覆い被さって重なる際に、下レイヤーの<article>が画面奥に向かって消える
+//  演出内容 : <article>が覆い被さって重なる際に、下レイヤーの<article>が画面奥に向かって消える
+//    最後の<article>以外に対して演出付与
 articles.forEach( (article, index) => {
-
-  // 最後の<article>以外に対して、次のセクションが被さってきた時の 前コンテンツ(article)の演出
-  const nextArticle = articles[index + 1];
-
-  const container = article.querySelector('.psd-article__container'); // 文章コンテンツ掲載エリア
+  const nextArticle = articles[index + 1];// 対象articleの次のarticle
+  const container = article.querySelector('.psd-article__container') as HTMLElement | null; // コンテンツ掲載エリア
   const title = article.querySelector('.psd-article__title');
   const description = article.querySelector('.psd-article__description');
   const bgImage = article.querySelector('.psd-article__bg-image');
+
+  //if (!container) return; // コンテンツコンテナがない場合に停止
+
+  const overflowHeight = getOverflowHeight( container );
+
+  // article ブロックのピン留め :: 画面の縦幅に対してoverflowする領域のスクロールを動的に延伸する
+  /*
+  const mainTL = gsap.timeline({
+    scrollTrigger: {
+      trigger: article,
+      start: 'top top',
+      end: () => `+=${ windowHeight + overflowHeight }`,// overflow領域を加算したスクロール終了位置に設定する
+      pin: true,
+      pinSpacing: false,
+      scrub: 1.2,
+      invalidateOnRefresh: true
+    }
+  });
+  // overflow領域がある場合にピン留めを上へスライドさせる
+  if ( overflowHeight > 0 ) {
+    mainTL.to( container, {
+      y: () => -overflowHeight, // ｙ方向を減算してみる...
+      ease: 'none'
+    }, 0 );
+  }
+  */
 
   // ---------------------------------
   // コンテンツブロックの重なり度合い(位置固定)の設定 (GSAP Pinning)
@@ -95,14 +169,36 @@ articles.forEach( (article, index) => {
   ScrollTrigger.create({
     trigger: article,
     start: 'top top', // when the top of the trigger hits the top of the viewport
-    end: '+=100%', // end after scrolling +=100% beyond the start
+    end: getPinDuration(article),
+    //end: '+=100%', // end after scrolling +=100% beyond the start
     pin: true, // pin the trigger element while active
     pinSpacing: false,
     scrub: 1.2, // smooth scrubbing, takes 1.2 second to "catch up" to the scrollbar
+    invalidateOnRefresh: true // リサイズ時・レスポンシブ時の再計算を有効化
+    /*
+    // 各セクションのピン留め・スクロールの進捗割合（progress）を検知して動的にインデックスを計算するロジック
+    // onToggle / onUpdate で状態変化を監視する
+    // onToggle : セクションがアクティブ状態に入った（self.isActive === true）タイミングを監視
+    onToggle: (self) => {
+      if ( self.isActive ) {
+        updateProgress( index + 1 );
+        updateScrollbarColor( article );
+      }
+    },
+    // すばやくスクロールした場合や最下部到達時の補正
+    onUpdate: (self) => {
+      // 最後のセクション かつ スクロール進捗が少しでも進んだら 最下部のindexで指定する
+      if ( index === articles.length -1 && self.progress > 0.1 ) {
+        updateProgress( articles.length );
+        updateScrollbarColor( article );
+      }
+    }
+    */
     // スクロールバーの色を<article>に合わせてコントロールする
     //  ScrollTriggerの進捗やセクションの切り替わりイベント（onEnter / onEnterBack）を利用して、
     //  現在表示されている <article> の実際の背景色（window.getComputedStyle）または指定カラーを取得し、CSS変数 --scrollbar-track-bg を書き換える
     // when the scroll position moves forward past the "start"
+    /*
     onEnter: () => { 
       updateProgress(index + 1);
       updateScrollbarColor( article );
@@ -112,27 +208,49 @@ articles.forEach( (article, index) => {
       updateProgress(index + 1); 
       updateScrollbarColor( article );
     }
+    */
+
   });
+
 
   // ---------------------------------
   // 次のArticleが上に重なってくる際のエフェクト ブラー＆ズームアウト
   // ---------------------------------
+  //if (nexrArticle && container) {
   if (nextArticle) {
+    /*
+    mainTL.to( container, {
+      scale: 0.9,
+      opacity: 0.3,
+      filter: 'blur(12px)',
+      ease: 'power2.inOut'
+    }, '>-0.2');// メインアニメーションの終了間際に重ねるように発火させる
+
+    if (bgImage) {
+      mainTL.to( bgImage, {
+        scale: 1.15,
+        filter: 'brightness(0.4) blur(5px)',
+        ease: 'power2.inOut'
+      }, '<');// コンテナの縮小と同時に背景画像もアニメーションさせる
+    }
+    */
+
     const exitTl = gsap.timeline({
       scrollTrigger: {
         trigger: nextArticle,
         start: 'top bottom', // 次のコンテンツ nextArticle が画面下部に侵入のタイミングで
         end: 'top top', // 画面上部に完全に重なる
-        scrub: true
+        scrub: true,
+        invalidateOnRefresh: true
       }
     });
-
+    // ScrollTriggerのタイムライン
     // フレームアウトする(現在表示の)コンテンツ
     exitTl.to( container, {
       scale: 0.9,
       opacity: 0.3,
       filter: 'blur(10px)',
-      y: '-10vh',
+      //y: '-10vh',
       ease: 'power2.inOut'
     }, 0);
 
@@ -144,6 +262,7 @@ articles.forEach( (article, index) => {
         ease: 'power2.inOut'
       }, 0);
     }
+
 
   }
 
@@ -158,6 +277,7 @@ articles.forEach( (article, index) => {
                     // the following keywords for each action: "play", "pause", "resume", "reset", "restart", "complete", "reverse", and "none".
     }
   })
+  // タイトル テキスト の出現演出
   .to( title, {
     y: '0%',
     duration: 1.2,
@@ -168,7 +288,7 @@ articles.forEach( (article, index) => {
     opacity: 1,
     duration: 1.0,
     ease: 'power3.out'
-  }, '-=0.8_');
+  }, '-=0.8');
 
   /* ---------------------------------------
   // 1. 各セクションのピン留め・レイヤー被せアニメーション
@@ -214,8 +334,56 @@ articles.forEach( (article, index) => {
   }, '-=0.8');
 */
 
-
 });// end of articles.forEach()
+
+// ---------------------------------
+// ページ全体
+// ---------------------------------
+ScrollTrigger.create({
+  trigger: '.psd-page',// <main class="psd-page">
+  start: 'top top',
+  end: 'bottom bottom',
+  scrub: true,
+  onUpdate: (self) => {
+    // ページ全体の進行度 0%~100% = 0.0~1.0
+    const progress = self.progress;
+
+    // 進行度から現在のインデックスを算出する
+    // 全体進捗から現在のインデックス（1 ～ 5）を算出
+    // 0.99 以上の場合は確実に最終インデックスへ到達させる
+    let currentIndex = Math.floor(progress * articles.length) + 1;
+    if (progress >= 0.98 || currentIndex > articles.length) {
+      currentIndex = articles.length;
+    }
+
+    // インジケーターとスクロールバー色の更新
+    updateProgress(currentIndex, progress);
+    
+    const currentArticle = articles[currentIndex - 1];
+    if (currentArticle) {
+      updateScrollbarColor(currentArticle);
+    }
+  }
+});
+
+
+// ---------------------------------
+// ページ最下部に到達した時の判定補足処理。スクロールの最後にプログレスインジケーターを更新する
+// スクロール量の加減にかかわらず、最後のセクションで必ず 05 / 05（100%）が表示されるようにする
+// ---------------------------------
+/*
+ScrollTrigger.create({
+  start: 'max',
+  end: 'max',
+  onEnter: () => {
+    const lastArticle = articles[articles.length -1];// 最下層の<article>を取得
+    if ( lastArticle ) {
+      updateProgress( articles.length );//最下層を指定
+      updateScrollbarColor( lastArticle );
+    }
+  }
+});
+*/
 
 
 }// initPageScrollDecoration()

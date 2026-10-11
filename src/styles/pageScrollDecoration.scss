@@ -4,6 +4,11 @@
  * Component : pageScrollDecoration's styles
  */
 
+// 関数モジュール
+@use "sass:map";
+@use "sass:color";
+
+
 // カラー設定（保守性を高めるマップ管理）
 // デフォルトのカラーリスト Scssマップ & データ属性で定義しています
 // map-get($article-colors, Num) で呼び出すことができます
@@ -19,7 +24,9 @@ $article-colors: (
 .psd-page {
   position: relative;
   width: 100%;
-  background-color: map-get($article-colors, 1);
+  // Dart Sass 3.~以降の  グローバル関数 map-get() 非推奨化で修正
+  //background-color: map-get($article-colors, 1);
+  background-color: map.get( $article-colors, 1 );
   color: #111;
   overflow-x: hidden;
   font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif;
@@ -54,13 +61,15 @@ $article-colors: (
 // 各Articleセクション
 .psd-article {
   position: relative;
-  width: 100%;
-  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
+  //min-height: 100vh;// コンテンツが常に画面を覆う
+  height: 100vh;
   overflow: hidden;
-  will-change: transform;
+  padding: 6rem 0;// 上下に余白
+  // will-change: transform;
 
   // 動的カラー設定（CSS変数との紐付け）
   // keyの値に属性値が合致するときに、オブジェクト内の対応するプロパティ=$colorを適用する
@@ -70,7 +79,8 @@ $article-colors: (
       background-color: $color;
       
       // 暗い背景（#040619など）のテキスト自動反転対応
-      @if lightness($color) < 40% {
+      // @if lightness($color) < 40% {  ... lightness() 非推奨です
+      @if color.channel( $color, "lightness", $space: hsl ) < 40% {
         color: #f9edd9;
       } @else {
         color: #040619;
@@ -89,7 +99,7 @@ $article-colors: (
     object-position: center;
     z-index: 1;
     pointer-events: none;
-    opacity: 0.85; // コンテンツとの視認性を考慮
+    opacity: 0.85; // コンテンツの視認性を考慮
     //will-change: transform, filter;
     transition: filter 0.3s ease;
   }
@@ -109,7 +119,7 @@ $article-colors: (
     width: 90%;
     max-width: 1100px;
     margin: 0 auto;
-    padding: 2rem;
+    padding: 4rem 2rem;
     //will-change: transform, opacity, filter;
     transform-origin: center center;
   }
@@ -145,6 +155,7 @@ $article-colors: (
     font-size: clamp(1rem, 1.8vw, 1.25rem);
     line-height: 1.7;
     opacity: 0; // 初期状態：透明
+    white-space: pre-wrap;
     transform: translateY(30px);
   }
 } // .psd-article
