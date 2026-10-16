@@ -14,7 +14,7 @@ const { total } = Astro.props;
   <div class="psd-progress__counter">
     <span id="psd-current-index">01</span>
     <span class="psd-progress__divider">/</span>
-    <span>{String(total).padStart(2, '0')}</span>
+    <span id="psd-total-index">{String(total).padStart(2, '0')}</span>
   </div>
   <div class="psd-progress__track">
     <div id="psd-progress-bar" class="psd-progress__bar"></div>

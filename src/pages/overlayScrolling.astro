@@ -1,19 +1,18 @@
 ---
-
 /**
 コンポーネントのファイル構成
 src/
-├── data/
-│   └── contents-overlay.ts          # 1. コンテンツデータ（記事ごとのテキストや設定を外部化）
 ├── pages/
-│   └── overlayScrolling.astro       # 2. メインページ（レイアウトとコンポーネント統合のエントリー）
+│   └── overlayScrolling.astro       メインページ（ "このファイル" レイアウトとコンポーネント統合のエントリー）
+├── data/
+│   └── contents-overlay.ts          コンテンツデータ（記事ごとのテキストや設定を外部化）
 ├── components/
-│   ├── OverlayScrollingArticle.astro.astro            # 3. セクション用コンポーネント（拡張性の高いテンプレート）
-│   └── ScrollProgress.astro         # 4. 右側プログレスインジケーター・UIコンポーネント
+│   ├── OverlayScrollingArticle.astro.astro            セクション用コンポーネント（拡張性の高いテンプレート）
+│   └── ScrollProgress.astro         右側プログレスインジケーター・UIコンポーネント
 ├── styles/
-│   └── overlayScrolling.scss        # 5. ページ専用スタイル（背景色、Sticky、文字色反転など）
+│   └── overlayScrolling.scss        ページ専用スタイル（背景色、Sticky、文字色反転など）
 └── js/
-    └── overlayScrolling.ts          # 6. スクロールおよび背景色・プログレス連動の制御スクリプト
+    └── overlayScrolling.ts          スクロールおよび背景色・プログレス連動の制御スクリプト
 
  /data/content-*.ts : 見出し、本文、初期背景色、あるいはタグなど、任意の数のコンテンツをデータとして一元管理。記事追加などの拡張性を持たせる
  
@@ -22,15 +21,48 @@ src/
 
  */
 
-
+// コンテンツデータ
+import { overlayContents } from '@/data/contents-overlayScroll';
+// 専用<article>
+import OverlayScrollingArticle from '@/components/OverlayScrollingArticle.astro';
+// プログレスインジケーター
+import ScrollProgress from '@/components/ScrollProgress.astro';
+// CSS
+import '@/styles/overlayScrolling.scss'
 
 ---
 
+<html lang="ja">
+
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="icon" href="/favicon.ico" />
+<title>Overlay Scrolling | Component Srtyle Experience</title>
+</head>
+
+<body>
+<!-- ページ全体のラッパー .osa-page -->
+<main class="osa-page">
+
+  <ScrollProgress total={overlayContents.length} /> {/* コンテンツの大項目の数 = article数 */}
+
+  {overlayContents.map( (article, index) => (
+    <OverlayScrollingArticle article={article} index={index} />
+  ))}
+
+</main>
 
 
+<script>
+import { initOverlayScrolling } from "@/js/overlayScrolling";
+// DOM構築完了後に スクロール演出を適用
+document.addEventListener( 'DOMContentLoaded', () => {
+  initOverlayScrolling();
+});
+</script>
+</body>
 
-<style lang="sccc">
-html,body {
-  margin: 0;  
-}
-</style>
+</html>
+

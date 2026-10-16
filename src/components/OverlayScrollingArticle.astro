@@ -1,8 +1,190 @@
 ---
 // Component for "OverlayScrolling"
+// <OverlayScrollingArticle/>
+import type { OverlayScrollingArticle } from "@/types/OverlayScrollingContentType";
+
+/**
+
+== OverlayScrollingArticle ==
+
+OverlayScrollingArticle.content > Contents[] > Blocks[] > ItemType
+
+// コンテンツの最小単位
+export type ItemType =
+ | { type: "text"; body: string }// テキストコンテンツ
+ | { type: "image"; url: string; alt?: string; caption?: string };// 画像コンテンツ
+// | { type: "code"; code: string; language?: string; caption?: string }  // 拡張用 サンプルコード
+// | { type: "video"; url: string; control?: string; option?: string; } // 拡張用 Video要素
+
+// 最小単位コンテンツ群(配列) <p>相当
+export interface Blocks {
+  id?: string;        //コンテンツ内識別子(機能拡張用)
+  title?: string;     //小項目タイトル  省略可
+  itemtype: ItemType; //コンテンツの最小単位
+}
+
+// 中項目 最小単位群を内包するセクション <section>相当
+export interface Contents {
+  id?: string;          //コンテンツ内識別子(機能拡張用)
+  title?: string;       //中項目(セクション)タイトル
+  overview?: string;    //セクション導入文 省略可
+  blocks: Blocks[];
+}
+
+export interface OverlayScrollingArticle {
+  id: number;
+  subtitle: string;
+  title: string;
+  bgColor: 'light' | 'dark';// '#f9edd9' | '#040619'  背景色指定
+  content: Contents[];
+}
+*/
+
+interface Props {
+  article: OverlayScrollingArticle
+  index : number;
+}
+const { article, index } = Astro.props;
+
 ---
 
-{/** 
-Component for "OverlayScrolling"
+<article 
+  class="osa-article" 
+  data-index={index}
+  data-bg={article.bgColor}
+  >{/** osa... overlay scrolling article */}
 
- */}
+<div class="osa-article__container">
+
+  <header class="osa-article__header">
+    <span class="osa-article__tag">{article.subtitle} // 0{index + 1}</span>{/** index... 0~ */}
+    <h2 class="osa-article__title">{article.title}</h2>
+  </header>
+
+  {/* コンテンツ構造の展開 Contents配列 */}
+  <div class="osa-article__body">
+    {article.content.map( (section) => (
+      <div class="osa-section">
+        { section.title && <h3 class="osa-section__title">{section.title}</h3> }
+        { section.overview && <p class="osa-section_overview">{section.overview}</p> }
+
+        <div class="osa-blocks">
+          { section.blocks.map( (block) => (
+              <div class="osa-block"  data-block-id={block.id}>
+                { block.title && <h4 class="osa-block__title">{block.title}</h4> }
+
+                {/* テキストタイプBlock item type = text */}
+                { block.itemtype.type === 'text' && (<p class="osa-block__text">{block.itemtype.body}</p>) }
+                {/* 画像タイプBlock item type = image */}
+                { block.itemtype.type === 'image' && (
+                  <figure class="osa-block__figure">
+                    <img src={block.itemtype.url} alt={block.itemtype.alt || ''} loading="lazy"  />
+                  </figure>
+                )}
+
+              </div><!-- / .osa-block -->
+          ))}
+        </div><!-- / .osa-blocks -->
+
+      </div><!-- / .osa-section -->
+
+    ))}
+    {/* article.content.map */}
+  </div><!-- / .osa-article__body -->
+
+</div><!-- / .osa-article__container -->
+
+</article><!-- / .osa-article -->
+
+
+<style lang="scss">
+.osa-article {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6rem 0;
+  box-sizing: border-box;
+  // 背景色や文字色の変化をなめらかにトランジション
+  transition: background-color 0.6s cubic-bezier(0.16, 1, 0.3, 1), color 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+
+  &__container {
+    width: 90%;
+    max-width: 950px;
+    margin: 0 auto;
+  }
+
+  &__header {
+    margin-bottom: 3rem;
+  }
+
+  &__tag {
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    display: block;
+    margin-bottom: 0.75rem;
+    font-weight: 500;
+  }
+
+  &__title {
+    font-size: clamp(2.5rem, 5.5vw, 5rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+}
+
+.osa-section {
+  &__title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.01em;
+  }
+
+  &__overview {
+    font-size: 1.2rem;
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+    opacity: 0.9;
+  }
+}
+
+.osa-blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.osa-block {
+  &__text {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    opacity: 0.85;
+  }
+
+  &__figure {
+    margin: 1.5rem 0;
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+      display: block;
+    }
+  }
+}
+</style>
