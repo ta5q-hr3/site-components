@@ -10,7 +10,7 @@ $color-set-light: v.$color-bright;
 $color-set-dark: v.$color-dark;
 
 :root {
-  --scrollbar-track-bg: #{$color-set-light};
+  --scrollbar-track-bg: #{$color-set-light};//初期状態
   --scrollbar-thumb-bg: rgba( 0, 0, 0, 0.25 );
 }
 
@@ -21,16 +21,33 @@ html, body {
 
 
 // ページ全体のベースレイアウト
+// <main>
 .osa-page {
   position: relative;
   width: 100%;
+  //min-height: 100vh;
   background-color: $color-set-light;
   color: $color-set-dark;
-  overflow-x: hidden;
+  //overflow-x: hidden;
+  //overflow-y: auto;
   font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif;
-  transition: background-color 0.6s cubic-bezier(0.16, 1, 0.3, 1), color 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: background-color 0.95s cubic-bezier(0.16, 1, 0.3, 1), color 0.95s cubic-bezier(0.16, 1, 0.3, 1);
 
-  // カスタムスクロールバーの装飾
+  // 背景色・文字色の切り替えスタイル
+  &[data-current-theme="dark"] {// 特定data属性の付与時に変化する
+    background-color: $color-set-dark;
+    color: $color-set-light;
+    --scrollbar-track-bg: #{$color-set-dark};
+    --scrollbar-thumb-bg: rgba( 255, 255, 255, 0.35 );
+  }
+  &[data-current-theme="light"] {
+    background-color: $color-set-light;
+    color: $color-set-dark;
+    --scrollbar-track-bg: #{$color-set-light};
+    --scrollbar-thumb-bg: rgba( 0, 0, 0, 0.25 );
+  }
+
+  // ---- カスタムスクロールバーの装飾 ----
   &::-webkit-scrollbar {
     width: 6px;
   }
@@ -47,18 +64,32 @@ html, body {
 
 // 各Articleセクションの基本レイアウト
 // スクロール時に画面に固定（Sticky）され、次が重なる構造 のベース
+// <article class="osa-article">
 .osa-article {
   position: relative;
+  //position: sticky;
+  top: 0;
+  //bottom: 0;
   width: 100%;
   min-height: 100vh;
   display: flex;
-  align-items: center;
-  justify-content: center;
+    align-items: center;
+    justify-content: center;
   padding: 6rem 0;
+  //padding-bottom: 5rem;
   box-sizing: border-box;
-  will-change: transform, background-color, color;
-  overflow: hidden;
+  //overflow-y: auto;
+  transition: background-color 0.5s cubic-bezier(0.16, 1, 0.3, 1), color 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  //will-change: transform, background-color, color;
 
+  // 記事の重なり順設定 ... 後続の<article>ほど上のレイヤーに設定する
+  @for $i from 1 through 10 { // ...とりあえず10個までを想定
+    &:nth-child( #{$i} ) {
+      z-index: $i;
+    }
+  }
+
+  /*
   // 背景色の切り替えパターン（データ属性による動的制御）
   &[data-bg="light"] {
     background-color: $color-set-light;
@@ -69,13 +100,17 @@ html, body {
     background-color: $color-set-dark;
     color: $color-set-light;
   }
+  */
 
   // コンテナ要素（拡張コンテンツの保護）
   &__container {
     position: relative;
-    z-index: 3;
+    //z-index: 3;
     width: 90%;
     max-width: 950px;
+    //max-height: 100vh;
+    box-sizing: border-box;
+    //overflow-y: auto;
     margin: 0 auto;
     //will-change: transform, opacity, filter;
   }

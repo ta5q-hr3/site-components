@@ -1,6 +1,8 @@
 ---
 // Component for "OverlayScrolling"
 // <OverlayScrollingArticle/>
+
+// コンテンツデータ型定義の読み込み
 import type { OverlayScrollingArticle } from "@/types/OverlayScrollingContentType";
 
 /**
@@ -64,7 +66,7 @@ const { article, index } = Astro.props;
   {/* コンテンツ構造の展開 Contents配列 */}
   <div class="osa-article__body">
     {article.content.map( (section) => (
-      <div class="osa-section">
+      <section class="osa-section">
         { section.title && <h3 class="osa-section__title">{section.title}</h3> }
         { section.overview && <p class="osa-section_overview">{section.overview}</p> }
 
@@ -86,7 +88,7 @@ const { article, index } = Astro.props;
           ))}
         </div><!-- / .osa-blocks -->
 
-      </div><!-- / .osa-section -->
+      </section><!-- / .osa-section -->
 
     ))}
     {/* article.content.map */}
