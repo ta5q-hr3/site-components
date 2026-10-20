@@ -143,7 +143,7 @@ articles.forEach( ( article, index ) => {
       //end: () => `+=${windowHeight + scrollLength}`,// 画面の高さと差分の高さの heightに達したときに終了する
       //end: 'bottom bottom',
       end: 'bottom top',
-      markers: true,
+      //markers: true, // 開発用マーカー表記
       pin: article,
       //pin: true,
       pinSpacing: false,

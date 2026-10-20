@@ -1,0 +1,133 @@
+---
+// スクロールに合わせたテキスト演出ページの試作
+
+// スクロール進捗 コンポーネント
+import ScrollProgress from "@/components/ScrollProgress.astro";
+// CSS
+import '@/styles/textMotionA.scss';
+
+---
+
+
+<html lang="ja">
+
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="icon" href="/favicon.ico" />
+<title>Text Motion A | GSAP Motion Experience</title>
+</head>
+<body>
+
+<main class="tma-main">
+
+<!-- スクロールプログレス インジケーター -->
+<ScrollProgress total={5} /><!-- articleの数をpropsで渡す -->
+
+<!-- 
+  -------
+  Contents 
+  <main>が 100vw / 100vh
+  <article>が min- width/height 100% で sticky:bottom
+  -------
+-->
+<!-- Article 1 (Light) -->
+<article class="tma-article" data-bg="light">
+  <div class="tma-container">
+    <section class="tma-section">
+      <span class="tma-tag">01 // INTRODUCTION</span>
+      <h1 class="tma-title" data-scramble="1st Ethereal Resonance">1st Ethereal Resonance</h1>
+      <p class="tma-text">静寂の中に宿る光と影。ミニマリズムがもたらす新しい視覚体験の幕開け。</p>
+    </section>
+    <section class="tma-section">
+      <span class="tma-tag">01-B // OVERVIEW</span>
+      <h2 class="tma-title">SECOND TITLE TEXT IS THERE 実行と評価の隔たり</h2>
+      <p class="tma-text">暗色系（#040619）の背景では、視認性を自動判定してテキストカラーがクリーンな白系へ反転します。ここではlight側が指定されているはず...</p>
+      <figure class="tma-block__figure">
+        <img src="/images/bg-03.svg" alt="画像サンプル" loading="lazy" />
+      </figure>
+      <aside>画像の補足テキスト</aside>
+      <p class="tma-text">さらに文章は続きます。画面外にコンテンツが溢れている場合のテストモデルです。<br/>
+      画面外にコンテンツが溢れている場合のテストモデルです。</p>
+    </section>
+  </div>
+</article>
+
+<!-- Article 2 (Dark) -->
+<article class="tma-article" data-bg="dark">
+  <div class="tma-container">
+    <section class="tma-section">
+      <span class="tma-tag">02 // CYBERNETIC</span>
+      <h1 class="tma-title" data-scramble="2nd Cybernetic Void">2nd Cybernetic Void</h1>
+      <p class="tma-text">深淵なる漆黒の空間に浮かび上がる幾何学構造とデジタルな息吹。</p>
+      <p>モノが「できること」と、それを「伝える手がかり」。迷わせないデザインの出発点。<br/>
+文化的背景や生活習慣、ユーザーのこれまでの経験から導き出される、近く対象に対する反射的理解について、ことこまかに分析することで、グローバルな機能性が実現されます。<br />
+そしてこの長いコンテンツ例がどのように表示されるかを検証するため、長い文章を用意しています。<br/>
+現在の仕様ではarticle内の構成を弄ることが難しそうなので、いったんテキストコンテンツの量を爆増させて縦長のブロックを再現しみましょう。<br/>
+</p>
+<p>
+このページでは以下のブロックを用意するかもしれません。
+</p>
+<ul>
+  <li>1. アフォーダンスとシグニファイア(ドナルド・ノーマン)</li>
+  <li>2. 実行と評価の隔たり(ドナルド・ノーマン)</li>
+  <li>3. less, but better(ディーター・ラムス)</li>
+  <li>4. ユーザビリティ10原則(ヤコブ・ニールセン)</li>
+  <li>5. ダブルダイヤモンド(英国デザイン評議会)</li>
+  <li>6 .デザイン思考(IDEO / スタンフォードd.school)</li>
+  <li>7. ゲシュタルトの法則(ウェルトハイマー、コフカ)</li>
+</ul>
+    </section>
+  </div>
+</article>
+
+<!-- Article 3 (Light) -->
+<article class="tma-article" data-bg="light">
+  <div class="tma-container">
+    <section class="tma-section">
+      <span class="tma-tag">03 // HARMONIC</span>
+      <h1 class="tma-title" data-scramble="3rd Harmonic Flow">3rd Harmonic Flow</h1>
+      <p class="tma-text">異なるトーンが滑らかに交錯するレイヤー構造。世界観がダイナミックに切り替わる。</p>
+    </section>
+  </div>
+</article>
+
+<!-- Article 4 (Dark) -->
+<article class="tma-article" data-bg="dark">
+  <div class="tma-container">
+    <section class="tma-section">
+      <span class="tma-tag">04 // QUANTUM</span>
+      <h1 class="tma-title" data-scramble="4th Quantum Matrix">4th Quantum Matrix</h1>
+      <p class="tma-text">無限の拡張性を持つデータグリッド。どのような環境でも破綻しない堅牢な設計。</p>
+    </section>
+  </div>
+</article>
+
+<!-- Article 5 (Light) -->
+<article class="tma-article" data-bg="light">
+  <div class="tma-container">
+    <section class="tma-section">
+      <span class="tma-tag">05 // GENESIS</span>
+      <h1 class="tma-title" data-scramble="5th Organic Genesis">5th Organic Genesis</h1>
+      <p class="tma-text">自然の有機的フォルムとテクノロジーが融合する未来のインターフェース。</p>
+    </section>
+  </div>
+</article>
+
+
+
+</main><!-- .tma-main -->
+
+<script>
+import {initTextMotionA } from '../js/textMotionA';
+
+document.addEventListener( 'DOMContentLoaded', () => {
+  initTextMotionA(); 
+});
+
+</script>
+
+</body>
+
+</html>

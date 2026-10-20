@@ -1,0 +1,202 @@
+@charset "UTF-8";
+
+@use "variables" as v;
+
+
+// 主カラー設定
+$color-light: v.$color-bright;
+$color-dark: v.$color-dark;
+
+:root {
+  --scrollbar-track-bg: #{$color-light};
+  --scrollbar-thumb-bg: rgba(0, 0, 0, 0.25);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+
+html,body {
+  margin:0;
+}
+
+article {
+  // 記事の重なり順設定 ... 後続の<article>ほど上のレイヤーに設定する
+  @for $i from 1 through 10 { // ...とりあえず10個までを想定
+    &:nth-child( #{$i} ) {
+      z-index: $i;
+    }
+  }
+}
+
+
+body {
+  background-color: $color-light;
+  color: $color-dark;
+  font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", sans-serif;
+  overflow-x: hidden;
+}
+
+// <main>
+.tma-main {
+  position: relative;
+  width: 100vw;
+  min-height: 100vh;
+
+  // カスタムスクロールバー
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: var(--scrollbar-track-bg);
+    transition: background 0.4s ease;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb-bg);
+    border-radius: 3px;
+    transition: background 0.4s ease;
+  }
+}
+
+// articleのSticky配置（bottom: 0でスタッキング）
+.tma-article {
+  position: sticky;
+  top:0;
+  //bottom: 0;
+  width: 100%;
+  min-height: 100vh;
+  box-sizing: border-box;
+  display: flex;
+    align-items: center;
+    justify-content: center;
+  padding: 4rem 1.5rem;
+  transition: background-color 0.8s ease, color 0.8s ease;
+
+  &[data-bg="light"] {
+    background-color: $color-light;
+    color: $color-dark;
+  }
+
+  &[data-bg="dark"] {
+    background-color: $color-dark;
+    color: $color-light;
+  }
+
+  // tma-article inner<div> wrapper
+  .tma-container {
+    display: block;
+    width: 100%;
+    max-width: 900px;
+    min-height: 50vh;
+    margin: 0 auto;
+    margin-top: 10%;
+    //overflow-x: hidden;
+    //overflow-y: auto;
+    overflow: auto;
+
+    // スクロールバー非表示
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+  }
+
+}
+
+
+// 初期状態：section内を透明にし、若干下方に配置（スライド用）
+.tma-section {
+  display: flex;
+    flex-direction: column;
+    justify-content: left;
+    align-items: baseline;
+    gap: 0.5rem;
+  //opacity: 0;
+  transform: translateY(30px);
+  //will-change: opacity, transform;
+
+  .tma-tag {
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.6;
+    display: block;
+    margin-bottom: 1rem;
+    font-weight: 500;
+  }
+
+  h1.tma-title {
+    font-size: clamp(2.2rem, 5vw, 4.5rem);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+  h2.tma-title {
+    font-size: clamp(1.5rem, 3.5vw, 2.5rem);
+    font-weight: 600;
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+  }
+
+  .tma-title {
+    position: relative;
+    margin-bottom: 1.5rem;
+    transition: transform 0.2s ease;
+    // scramble text のグリッチ演出
+    &.is-glitching {
+      text-shadow: 2px 0 rgba(255, 0, 85, 0.7), -2px 0 rgba(0, 229, 255, 0.7);
+      animation: textGlitch 0.15s infinite alternate; 
+    }
+
+  }
+
+  .tma-text {
+    font-size: clamp(1rem, 1.5vw, 1.25rem);
+    line-height: 1.8;
+    opacity: 0.85;
+    max-width: 700px;
+  }
+
+  figure.tma-block__figure {
+    margin: 1.5rem 0;
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+      display: block;
+    }
+  }
+
+}// .tma-section
+
+
+// scramble text グリッチアニメーション
+@keyframes textGlitch {
+  0% {
+    transform: translate(0, 0) skew(0deg);
+  }
+  50% {
+    transform: translate(-1px, 1px) skew(-1deg);
+  }
+  100% {
+    transform: translate(1px, -1px) skew(1deg);
+  }
+}
+
+
+// Media Queries Level 4 記法によるレスポンシブ調整
+@media (width >= 768px) {
+  .tma-article {
+    padding: 6rem 3rem;
+  }
+}
+
