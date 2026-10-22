@@ -8,7 +8,8 @@ $color-light: v.$color-bright;
 $color-dark: v.$color-dark;
 
 :root {
-  --scrollbar-track-bg: #{$color-light};
+  // 変数設定--スクロールバーカラー
+  --scrollbar-track-bg: #{$color-light}; // 初期状態
   --scrollbar-thumb-bg: rgba(0, 0, 0, 0.25);
 }
 
@@ -18,9 +19,15 @@ $color-dark: v.$color-dark;
   padding: 0;
 }
 
-
 html,body {
   margin:0;
+}
+
+body {
+  background-color: $color-light;
+  //color: $color-dark;
+  font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", sans-serif;
+  overflow-x: hidden;
 }
 
 article {
@@ -32,38 +39,46 @@ article {
   }
 }
 
-
-body {
-  background-color: $color-light;
-  color: $color-dark;
-  font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", sans-serif;
-  overflow-x: hidden;
-}
-
 // <main>
 .tma-main {
   position: relative;
   width: 100vw;
   min-height: 100vh;
 
-  // カスタムスクロールバー
+  // 背景色・文字色の切り替えスタイル
+  &[data-current-theme="dark"] {// 特定data属性の付与時に変化する
+    //background-color: $color-set-dark;
+    //color: $color-set-light;
+    --scrollbar-track-bg: #{$color-dark};
+    --scrollbar-thumb-bg: rgba( 255, 255, 255, 0.35 );
+  }
+  &[data-current-theme="light"] {
+    //background-color: $color-set-light;
+    //color: $color-set-dark;
+    --scrollbar-track-bg: #{$color-light};
+    --scrollbar-thumb-bg: rgba( 0, 0, 0, 0.25 );
+  }
+
+  // スクロールバーのカスタマイズ
   &::-webkit-scrollbar {
     width: 6px;
   }
   &::-webkit-scrollbar-track {
     background: var(--scrollbar-track-bg);
-    transition: background 0.4s ease;
+    transition: background 0.6s ease;
   }
   &::-webkit-scrollbar-thumb {
     background: var(--scrollbar-thumb-bg);
     border-radius: 3px;
-    transition: background 0.4s ease;
+    transition: background 0.6s ease;
   }
 }
 
-// articleのSticky配置（bottom: 0でスタッキング）
+// articleのSticky配置
+// 
 .tma-article {
-  position: sticky;
+  position: relative;
+  //position: sticky;
   top:0;
   //bottom: 0;
   width: 100%;
@@ -73,16 +88,57 @@ body {
     align-items: center;
     justify-content: center;
   padding: 4rem 1.5rem;
-  transition: background-color 0.8s ease, color 0.8s ease;
+  transition: background-color 1.2s ease;
+  //transition: background-color 0.8s ease, color 0.8s ease;
 
+  // グラデーションの境界位置制御 変数 (デフォルト100% ... 透明度 1)
+  --grad-percent: 120%;
+  --grad-p: 120;
+  
   &[data-bg="light"] {
-    background-color: $color-light;
     color: $color-dark;
+    //background-color: $color-light;
+    background-image: linear-gradient(
+      to top,
+      #{$color-light} 0%,
+      #{$color-light} calc( var(--grad-p) * 1% ),
+      rgba( 249, 237, 217, 0 ) 100%
+    );
+    //  rgba( 249, 237, 217, 0.95 ) calc( var(--grad-p) * 0.5 * 1% ),
+    //  rgba( 249, 237, 217, 0 ) calc( var(--grad-p) * 1% )
+    //background-color: $color-light; // ベタ塗り用のフォールバック
+    // アニメーション完了後のベタ塗り背景
+    &.is-solid-bg {
+      background-image: none !important;
+      background-color: $color-light !important;
+    }
   }
+   // 初期状態...上端が透過
+   // --grad-percentを動的に変化させ、グラデーションの境界線を上方向に移動させます
 
   &[data-bg="dark"] {
-    background-color: $color-dark;
     color: $color-light;
+    //background-color: $color-dark;
+    background-image: linear-gradient(
+      to top,
+      #{$color-dark} 0%,
+      #{$color-dark} calc( var(--grad-p) * 1% ),
+      rgba( 4, 6, 25, 0 ) 100%
+    );
+    //      rgba( 4, 6, 25, 0.95 ) calc( var(--grad-p) * 0.5 * 1% ),
+    //  rgba( 4, 6, 25, 0 ) calc( var(--grad-p) * 1% )
+    //background-color: $color-dark;
+    // アニメーション完了後のベタ塗り背景
+    &.is-solid-bg {
+      background-image: none !important;
+      background-color: $color-dark !important;
+    }
+  }
+  // <article>2段目以降を初期に透過させる
+  //  1段目 100% 背景色あり / 2段目以降 下から上にかけて透明
+  &:not(:first-child) {
+    --grad-percent: 30%;
+    --grad-p: 10;
   }
 
   // tma-article inner<div> wrapper
@@ -91,6 +147,7 @@ body {
     width: 100%;
     max-width: 900px;
     min-height: 50vh;
+    //max-height: 90%;
     margin: 0 auto;
     margin-top: 10%;
     //overflow-x: hidden;
@@ -106,7 +163,7 @@ body {
 
   }
 
-}
+}// .tma-article
 
 
 // 初期状態：section内を透明にし、若干下方に配置（スライド用）
@@ -117,7 +174,7 @@ body {
     align-items: baseline;
     gap: 0.5rem;
   //opacity: 0;
-  transform: translateY(30px);
+  transform: translateY(60px);
   //will-change: opacity, transform;
 
   .tma-tag {
@@ -131,12 +188,14 @@ body {
   }
 
   h1.tma-title {
+    max-width: 70vw;
     font-size: clamp(2.2rem, 5vw, 4.5rem);
     font-weight: 700;
     line-height: 1.15;
     letter-spacing: -0.02em;
   }
   h2.tma-title {
+    max-width: 50vw;
     font-size: clamp(1.5rem, 3.5vw, 2.5rem);
     font-weight: 600;
     line-height: 1.0;
@@ -147,6 +206,7 @@ body {
     position: relative;
     margin-bottom: 1.5rem;
     transition: transform 0.2s ease;
+
     // scramble text のグリッチ演出
     &.is-glitching {
       text-shadow: 2px 0 rgba(255, 0, 85, 0.7), -2px 0 rgba(0, 229, 255, 0.7);
@@ -193,7 +253,7 @@ body {
 }
 
 
-// Media Queries Level 4 記法によるレスポンシブ調整
+// レスポンシブ調整
 @media (width >= 768px) {
   .tma-article {
     padding: 6rem 3rem;

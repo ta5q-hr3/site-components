@@ -31,9 +31,9 @@ const getScrollLength = ( container: HTMLElement) => {
 // @param total: number
 // プログレスインジケーター(articleの数と現在位置の表示)を更新する
 function updateProgress( currentIndex: number, total: number ) {
-  const currentEl = document.getElementById('psd-current-index');
-  const totalEl = document.getElementById('psd-total-index');
-  const progressBar = document.getElementById('psd-progress-bar');
+  const currentEl = document.getElementById('progress-bar-current-index');
+  const totalEl = document.getElementById('progress-bar-total-index');
+  const progressBar = document.getElementById('progress-bar');
   //console.log(progressAmount);
   //最下部に到達する前に最終インデックス番号に更新する
   const indexVal = (currentIndex / total) >= 0.96 || currentIndex > total ? total : currentIndex;

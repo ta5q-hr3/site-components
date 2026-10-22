@@ -54,8 +54,8 @@ const getPinDuration = ( article:HTMLElement ) => {
 // ==== プログレスインジケーターの更新処理 ====
 // globalProgress : <main class="psd-page">のスクロール量 %  0.0 ~ 1.0
 function updateProgress( currentIndex: number, globalProgress: number) {
-  const currentEl = document.getElementById('psd-current-index');
-  const progressBar = document.getElementById('psd-progress-bar');
+  const currentEl = document.getElementById('progress-bar-current-index');
+  const progressBar = document.getElementById('progress-bar');
   
   if (currentEl) {
     currentEl.textContent = String(currentIndex).padStart(2, '0');

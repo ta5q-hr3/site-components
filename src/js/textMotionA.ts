@@ -6,12 +6,70 @@ import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
 gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin);
 
 
+// ===================
+// Utility Methods
+// ===================
+
+/**
+ * ---- 背景色の変更メソッド ----
+ * @param currentArticle: HTMLElement ... .tma-article <article>
+ * @param pageContainer: HTMLElement ... .tma-main <main>
+ * <article>に指定されたテーマカラー light | dark に入れ替える
+ * CSSに .tma-article[data-bg="light"] | [data-bg="dark"] のセレクタを設定しており、
+ * transition で背景色を設定しているため、 data-bg プロパティが変更されるとアニメーション付きで色設定が変わります
+ */
+function updateThemeColor( currentArticle: HTMLElement, pageContainer: HTMLElement ) {
+  if (!currentArticle) return;
+  if (!pageContainer) return;
+  const bgType = currentArticle.getAttribute('data-bg');
+
+  if (bgType === 'dark') {
+    // <main>のスクロールバーを変色させる
+    pageContainer.setAttribute( 'data-current-theme', 'dark' );
+  } else { // bgType === 'light'
+    pageContainer.setAttribute( 'data-current-theme', 'light' );
+  }
+
+}
+
+/**
+ * ---- プログレスバーの更新 ---
+ * @param currentIndex : number これから表示するarticleのindex
+ * @param total : number articleの数
+ */
+function updateProgress( currentIndex: number, total: number ) {
+  // 関係要素の取得
+  const currentEl = document.getElementById('progress-bar-current-index');// インデックスの現在表記Element (0始まりの2桁表記)
+  const totalEl = document.getElementById('progress-bar-total-index');// articleのトータル数Element
+  const progressBar = document.getElementById('progress-bar');// プログレスバーElement
+  // 最下部に到達する前に最終インデックス番号に更新する
+  const currentVal = currentIndex / total;
+  const indexVal = currentVal >= 0.96 || currentIndex > total ? total : currentIndex;
+  if (currentEl) currentEl.textContent = String(indexVal).padStart( 2, '0' );
+  //if (totalEl) totalEl.textContent = String(total).padStart( 2, '0' );
+  // プログレスバーを伸び縮み
+  if (progressBar) {
+    const percent = currentVal * 100;//伸縮サイズの算出
+    gsap.to( progressBar, {
+      height: `${percent}%`,
+      duration: 0.3,
+      ease: 'power2.out',
+      overwrite: 'auto'
+    });
+  }
+}
+
+// ===================
+
+
 /**
  * Exporting Main method
  */
 export function initTextMotionA() {
 
-// <artcile>の取得
+// <main>を取得
+const pageContainer = document.querySelector('.tma-main') as HTMLElement | null;
+// <artcile>[]の取得
 const articles = document.querySelectorAll<HTMLElement>('.tma-article');
 if (articles.length === 0) return; // 概要要素のない場合に処理停止
 
@@ -19,9 +77,21 @@ articles.forEach((article, index) => {
   // <article> <div wrapper> <section class="tma-section">
   const section = article.querySelectorAll<HTMLElement>('.tma-section');
   // scramble text title
-  const title = article.querySelector('.tma-title') as HTMLElement | null;
+  const title = article.querySelector('h1.tma-title') as HTMLElement | null;
   
-  if (!section) return; // sectionなしの場合は除外
+  //if (!section) return; // sectionなしの場合は除外?
+
+  // articleごとの背景色変化アニメーション
+  if (index > 0) {
+    // 2段目以降は初期値 30%
+    // css変数  --grad-percent
+    gsap.set( article, { '--grad-p': 20 });
+    article.classList.remove('is-solid-bg');// 2段目以降のアニメーション適用
+  } else {
+    // 1段目は最初から 100% = 透明度なし
+    gsap.set( article, { '--grad-p': 100});
+    article.classList.add('is-solid-bg');
+  }
 
   // 1. セクションのスクロールイン演出 (画面上部から40%地点に達した時)
   const tl = gsap.timeline({
@@ -29,12 +99,41 @@ articles.forEach((article, index) => {
       trigger: article,
       start: 'top 20%', // 画面の下から80%位置（上から20%)の スクロールインした位置
       end: 'bottom top',
-      markers: true,
+      //markers: true,
       toggleActions: 'play none none reverse',
-      onEnter: () => updateThemeAndProgress(article, index + 1, articles.length),
-      onEnterBack: () => updateThemeAndProgress(article, index + 1, articles.length)
+      //onEnter: () => updateThemeAndProgress(article, index + 1, articles.length),
+      //onEnterBack: () => updateThemeAndProgress(article, index + 1, articles.length)
+      onEnter: () => {
+        updateProgress( index + 1, articles.length );
+        updateThemeColor( article, pageContainer );
+      },
+      onEnterBack: () => {
+        updateProgress( index + 1, articles.length );
+        updateThemeColor( article, pageContainer );
+        if ( index > 0 ) {
+          //gsap.to( article, { '--grad-p': 20 } );
+          article.classList.remove('is-solid-bg');
+        }
+      },
+      // スクロールバック時にはベタ塗り解除
+      /*
+      onReverseComplete: () => {
+        if ( index > 0 ) {
+          console.log("onReverseComp");
+          article.classList.remove('is-solid-bg');
+        }
+      }
+      */
     }
   });
+  // articleの背景色透明度を変更する
+  if ( index > 0 ) { // article 2段目以降
+    tl.to( article, {
+      '--grad-p': 100,
+      duration: 0.65,
+      ease: 'power2.out'
+    }, 0);
+  }
 
   // フェードイン ＆ スライドアップ
   tl.fromTo(section, 
@@ -43,9 +142,17 @@ articles.forEach((article, index) => {
       alpha: 1,// 不透明
       //opacity: 1,
       y: 0,
-      duration: 3.0,
-      ease: 'power3.out'
-    });
+      duration: 1.5,
+      ease: 'power3.out',
+      /*
+      onComplete: () => {
+        // 演出完了後に背景グラデーションの撤去
+        if (index > 0) {
+          article.classList.add('is-solid-bg');
+        }
+      }
+      */
+  });
 
   // 2. 標題（h1）のスクランブルテキスト演出
   if (title && title.dataset.scramble) {
@@ -54,8 +161,9 @@ articles.forEach((article, index) => {
         text: title.dataset.scramble,
         //chars: '■',
         //chars: '▓▒░█<>/\\#@$%&§±~*01',
-        chars: '■▓▒░█⚪︎●',
-        revealDelay: 0,
+        //chars: '■▓▒░█⚪︎●',
+        chars: '■▓░⚪︎●',
+        //revealDelay: 0,
         speed: 0.8,
         delimiter: ''
       },
@@ -67,8 +175,7 @@ articles.forEach((article, index) => {
       onComplete: () => {
         title.classList.remove('is-glitching');// 撤去
       }
-
-    }, 0); // セクションの出現と同時にスタート
+    }, '+=0.05'); // セクションの出現とほぼ同時にスタート
   }
 });// articles.forEach()
 
@@ -90,9 +197,9 @@ articles.forEach((article, index) => {
     }
 
     // プログレスインジケーターの更新
-    const currentEl = document.getElementById('osa-current-index');
-    const totalEl = document.getElementById('osa-total-index');
-    const progressBar = document.getElementById('osa-progress-bar');
+    const currentEl = document.getElementById('progress-bar-current-index');
+    const totalEl = document.getElementById('progress-bar-total-index');
+    const progressBar = document.getElementById('progress-bar');
 
     if (currentEl) currentEl.textContent = String(currentIndex).padStart(2, '0');
     if (totalEl) totalEl.textContent = String(total).padStart(2, '0');
