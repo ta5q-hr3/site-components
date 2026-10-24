@@ -1,0 +1,59 @@
+---
+/**
+ * Constellation Dots // 背景装飾
+ * <canvas>に等間隔に小さな丸点をしきつめます。
+ * カーソルオーバーした部分を丸点が避けるように動作します
+ * 
+ */
+
+interface Props {
+  dotColor?: string;// 16進数カラースケール値
+  stageBg?: string;// CSS backgroundプロパティ値
+  title?: string;// Text
+}
+
+//import '@/styles/_variables.scss';
+// $color-bright: #f9edd9;
+// $color-dark: #040619;
+
+// デフォルト設定内容(フォールバック値)をコンポーネントに渡す
+const {
+  dotColor = '#f9edd9',
+  stageBg = 'radial-gradient( circle at center, #0a0a20 0%, #040619 100% )',
+  title = '01. Interactive Constellation Dots'
+} = Astro.props;
+
+//import '@/styles/constellationDots.scss'; // 専用スタイル
+
+---
+
+
+<!-- 
+  PropsをCSS変数へ適用する 
+    コンポーネント使用時に<ConstellationDots>要素内で設定した  --dot-color と  --stage-bg を スクリプト & scssファイル内で適用
+-->
+<div
+  class="constellation-stage"
+  style={`--dot-color: ${dotColor}; --stage-bg: ${stageBg};`}
+>
+  <header class="constellation-header">
+    <h2 class="constellation-title">{title}</h2>
+  </header>
+  <div class="constellation-canvas-wrapper">
+    <canvas class="constellation-canvas"></canvas>
+    <div class="constellation-hint">Hover to Push Partiles</div>
+  </div>
+</div><!-- .constellation-stage -->
+
+<script>
+// /src/js/constellationDots.ts
+import { initConstellation } from "@/js/constellationDots";
+import { startsWith } from "astro:schema";
+
+document.addEventListener( 'DOMContentLoaded', () => {
+  // ページ内の対象コンポーネントを検出する
+  const stages = document.querySelectorAll<HTMLElement>('.constellation-stage');
+  stages.forEach( stage => initConstellation(stage) );
+});
+
+</script>

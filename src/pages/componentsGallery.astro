@@ -1,0 +1,94 @@
+---
+/**
+ * Article内への実装を想定したコンポーネントのギャラリーページです。
+ * 
+ */
+//$color-bright: #f9edd9;
+//$color-dark: #040619;
+
+const brightColor = '#f9edd9';
+const darkColor = '#040619';
+
+import ScrollProgress from "@/components/ScrollProgress.astro";
+import ScrollProgressBar from "@/components/ScrollProgressBar.astro"
+import '../styles/componentsGallery.scss';
+
+// ---- Components ----
+import ConstellationDots from '@/components/ConstellationDots.astro';
+import '@/styles/constellationDots.scss'; // 専用スタイル
+const constellationDotsBg = "radial-gradient(circle at center, #0f173a 0%, #040619 100%)";
+
+---
+
+<html lang="ja">
+
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="icon" href="/favicon.ico" />
+<title>Components Gallery | Interractive Visual Components Showcase</title>
+</head>
+
+<body>
+
+<main class="cg-main">
+
+<!-- スクロール プログレスインジケーター -->
+<!-- <ScrollProgress total={3} /> -->
+<ScrollProgressBar total={3} />
+
+<!-- ページタイトル -->
+<section class="cg-hero">
+  <div class="cg-hero__container">
+    <span class="cg-hero__tag">00 // SHOWCASE ARCHIVE</span>
+    <h1 class="cg-hero__title">Components<br />Gallery</h1>
+    <p class="cg-hero__desc">Let's scroll down to explore interractive visual / motion components.</p>
+  </div>
+</section>
+
+<!-- ------------------------------
+  -- Interactive Constellation Dots
+  -- ------------------------------ -->
+<article class="cg-article" data-component="constellation">
+  <div class="cg-article__inner">
+    <h2 class="cg-article__title">01. Interactive Constellation Dots</h2>
+    <ConstellationDots  
+      dotColor={brightColor}
+      stageBg={constellationDotsBg}
+      title=""
+    />
+  </div>
+</article>
+
+<!-- ------------------------------
+  -- Magnetic Fluid
+  -- ------------------------------ -->
+<article class="cg-article" data-component="magnetic-fluid">
+  <div class="cg-article__inner">
+    <h2 class="cg-article__title">02. Magnetic Fluid</h2>
+    <!-- 各コンポーネントをここにマウントする -->Empty yet
+  </div>
+</article>
+
+<!-- ------------------------------
+  -- Noise Displacement Map
+  -- ------------------------------ -->
+<article class="cg-article" data-component="noise-displacement">
+  <div class="cg-article__inner">
+    <h2 class="cg-article__title">03. Noise Displacement Map</h2>
+    <!-- 各コンポーネントをここにマウントする -->Empty yet
+  </div>
+</article>
+
+
+</main>
+
+
+
+</body>
+
+</html>
+
+
+

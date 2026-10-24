@@ -1,0 +1,87 @@
+@charset "UTF-8";
+
+// For  /components/ConstellationDots.astro
+/*
+DOM Structure ...
+
+<div 
+  class="constellation-stage" 
+  style={`--dot-color: ${dotColor}; --stage-bg: ${stageBg};`}
+>
+  <div class="constellation-header">
+    <h3 class="constellation-title">{title}</h3>
+  </div>
+  <div class="constellation-canvas-wrapper">
+    <canvas class="constellation-canvas"></canvas>
+    <div class="constellation-hint">Hover to Push Particles</div>
+  </div>
+</div>
+*/
+
+// <div> wrapper
+.constellation-stage {
+  width: 100%;
+  height: 100%;
+  display: flex;
+    flex-direction: column;
+    justify-content: center; 
+
+  // <header>
+  header.constellation-header {
+    margin-bottom: 1rem;
+
+   .constellation-title {
+      font-size: clamp(1.8rem, 6vw, 4.5rem);
+      //font-size: clamp(3rem, 9vw, 8.5rem);
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      //margin-bottom: 2rem;
+    }
+  }
+
+  // <div> wrapper
+  .constellation-canvas-wrapper {
+    position: relative;
+    width: 100%;
+    //height: 380px;
+    height: 80%;
+    background: var(--stage-bg, radial-gradient(circle at center, #0a0a20 0%, #000 100%));
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: crosshair;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    // <canvas>
+    .constellation-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+    // canvas の下のテキスト
+    .constellation-hint {
+      position: absolute;
+      bottom: 20px;
+      width: 100%;
+      text-align: center;
+      color: rgba(255, 255, 255, 0.3);
+      font-size: 10px;
+      letter-spacing: 3px;
+      pointer-events: none;
+      text-transform: uppercase;
+      z-index: 2;
+    }
+
+  }// -canvas-wrapper
+
+}// wrapper .constellation-stage
+
+@media ( width >= 768px ) {
+  // モバイルサイズ時にはラッパーの横幅を制限する
+  .constellation-canvas-wrapper {
+    height: 450px;
+  }
+
+}

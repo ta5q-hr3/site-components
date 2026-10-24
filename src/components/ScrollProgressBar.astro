@@ -1,0 +1,141 @@
+---
+/**
+ * 単体で動くバージョンの スクロールプログレスバー
+ *
+ * 実装初期バージョンは ページごと に独特の画面内<article>切り替わりタイミングを監視していましたが、
+ * 汎用的にページ内にある <article> のスクロール状況画面上端/下端に到達した時点で 単独で動作するバージョンです。
+ */
+// 画面右端のスクロール位置表示 デコレーションUI要素
+//    00/NN ーーーー
+
+// 表記内容プロパティを受取る
+interface Props {
+  total: number;
+}
+const { total } = Astro.props;
+
+---
+
+<div class="progress-bar-container" aria-hidden="true">
+  <div class="progress-bar-container__counter">
+    <span id="progress-bar-current-index">01</span>
+    <span class="progress-bar-container__divider">/</span>
+    <span id="progress-bar-total-index">{String(total).padStart(2, '0')}</span>
+  </div>
+  <div class="progress-bar-container__track">
+    <div id="progress-bar" class="progress-bar-container__bar"></div>
+  </div>
+</div>
+
+<style lang="scss">
+  .progress-bar-container {
+    position: fixed;
+    right: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    mix-blend-mode: difference; // 背景色に応じて反転するモダン仕様
+    color: #fff;
+
+    &__counter {
+      font-size: 0.875rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      writing-mode: vertical-rl;
+    }
+
+    &__track {
+      width: 2px;
+      height: 120px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 2px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    &__bar {
+      width: 100%;
+      height: 20%;
+      background: #fff;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .psd-progress {
+      right: 1rem;
+    }
+  }
+</style>
+
+<script>
+// アニメーションライブラリの読み込み
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
+
+/**
+ * ---- プログレスバーの更新 ---
+ * @param currentIndex : number これから表示するarticleのindex
+ * @param total : number articleの数
+ */
+function updateProgress( currentIndex: number, total: number ) {
+  // 関係要素の取得
+  const currentEl = document.getElementById('progress-bar-current-index');// インデックスの現在表記Element (0始まりの2桁表記)
+  //const totalEl = document.getElementById('progress-bar-total-index');// articleのトータル数Element
+  const progressBar = document.getElementById('progress-bar');// プログレスバーElement
+  // 最下部に到達する前に最終インデックス番号に更新する
+  const currentVal = currentIndex / total;
+  const indexVal = currentVal >= 0.96 || currentIndex > total ? total : currentIndex;
+  if (currentEl) currentEl.textContent = String(indexVal).padStart( 2, '0' );
+  //if (totalEl) totalEl.textContent = String(total).padStart( 2, '0' );
+  // プログレスバーを伸び縮み
+  if (progressBar) {
+    const percent = currentVal * 100;//伸縮サイズの算出
+    gsap.to( progressBar, {
+      height: `${percent}%`,
+      duration: 0.3,
+      ease: 'power2.out',
+      overwrite: 'auto'
+    });
+  }
+}
+
+// プログレスバー 動作用メソッド
+function initProgressBar() {
+
+  const articles = document.querySelectorAll<HTMLElement>('article');
+  const totalNum = articles.length;
+  if (articles.length === 0) return; // 概要要素のない場合に処理停止
+
+  articles.forEach((article, index) => {
+    ScrollTrigger.create({
+      trigger: article,
+      start: 'top 20%',
+      end: 'bottom top',
+      toggleActions: 'play none none reverse',
+      onEnter: () => {
+        updateProgress( index + 1, totalNum );
+      },
+      onEnterBack: () => {
+        updateProgress( index + 1, totalNum );
+      }
+    });
+  });
+
+}
+
+// 初期化実行
+//initProgressBar();
+document.addEventListener( 'DOMContentLoaded', () => {
+  initProgressBar(); 
+});
+
+</script>
