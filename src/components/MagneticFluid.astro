@@ -1,0 +1,176 @@
+---
+/**
+Magnetic Fluid
+
+1. SVGフィルターのコンポーネント内包
+複数の円（Ball）が接触した瞬間に一体化する演出にSVGの <filter> を使用。
+コンポーネントのマークアップ内のみでモーフィングに対応させる。
+
+2. カラー変数の外部設定化
+背景や流体のトーンを外側のプロパティで操作・変更できるよう設計。
+
+3. 演出のライフサイクル管理
+- ウィンドウのリサイズにおける再描画
+- コンポーネント破棄時のイベントリスナー・アニメーションフレーム（requestAnimationFrame）のクリーンアップ
+描画リソースを最小限に保つ
+
+ */
+
+// 背景色
+interface Props {
+  //title?: string;
+  orbColor?: string; // 球体色 16進数カラー指定
+  containerBgColor?: string; // 背景色指定
+}
+
+const {
+  //title ='02. Magnetic Flud',
+  orbColor = '#ffffff',//デフォ値
+  containerBgColor = '#0a0a0c'
+} = Astro.props;
+ 
+
+//import '@/styles/_variables.scss';
+
+---
+
+<!-- Component wrapper
+  Propで受け取った色指定 = CSS変数値をインラインで要素から適用します。
+ -->
+<div 
+  class="magnetic-stage"
+  style={`--orb-color: ${orbColor}; --stage-bg: ${containerBgColor};`}
+  >
+
+<!-- header class="magnetic-header">
+  <h3 class="title">{title}</h3>
+</header -->
+
+<div class="container">
+  <div class="background">
+    <div class="noise"></div>
+  </div>
+  <canvas class="canvas"></canvas>
+  <div class="overlay"><span class="label">CORE_ELEMENT</span></div>
+
+  <!-- 複数の円を一つの流体に見せるメタボール用SVGフィルター -->
+  <svg xmlns="http://www.w3.org/2000/svg" class="filter-svg" style="position: absolute; width: 0; height: 0; pointer-events: none;">
+    <defs>
+      <filter id="metaball-filter">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="15" result="blur" />
+        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 25 -10" result="gooey" />
+        <feComposite in="SourceGraphic" in2="gooey" operator="atop" />
+      </filter>
+    </defs>
+  </svg>
+
+</div><!-- .container -->
+
+
+</div><!-- .magnetic-stage -->
+
+
+<style lang="scss">
+
+@use "../styles/variables" as v;
+
+// Component wrapper
+.magnetic-stage {
+  position: absolute;
+    top: 0;
+    left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+/*
+header {
+  margin-bottom: 1rem;
+  .title {
+    font-size: clamp(1.2rem, 2vw, 1.8rem);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+}
+*/
+
+.container {
+  width: 100%;
+  //height: 380px;
+  height: 100%;
+  //background: #0a0a0c;
+  //background: v.$color-dark;
+  // Propから渡された背景色を設定する
+  background: var( --stage-bg, v.$color-dark);
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  //border-radius: 12px;
+  //border: 1px solid rgba(255, 255, 255, 0.08);
+
+  .background {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+
+    .noise {
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, #1a1a2e 0%, #0a0a0c 100%);
+      opacity: 0.5;
+    }
+
+  }
+
+  canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    // 複数の円を一つの流体に見せるためのフィルタ
+    filter: url(#metaball-filter);
+  }
+
+  .overlay {
+    position: absolute;
+    z-index: 5;
+    pointer-events: none;
+
+    .label {
+      font-family: 'Inter', sans-serif;
+      font-weight: 200;
+      font-size: 10px;
+      color: v.$color-bright;
+      letter-spacing: 0.8em;
+      opacity: 0.3;
+      pointer-events: inherit;
+    }
+  }
+
+}// .container
+
+@media (width <= 768px) {
+  .container {
+    //height: 450px;
+    height: 100vh;
+  }
+}
+
+</style>
+
+
+
+<script>
+import { initMagneticFlud } from '@/js/magneticFlud';
+
+document.addEventListener( 'DOMContentLoaded', () => {
+  const stages = document.querySelectorAll<HTMLElement>('.magnetic-stage');
+  stages.forEach( stage => initMagneticFlud(stage) );
+});
+
+</script>

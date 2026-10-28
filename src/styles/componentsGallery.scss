@@ -26,7 +26,8 @@ body {
 .cg-main {
   position: relative;
   width: 100vw;
-  scroll-snap-type: y proximity;
+  //scroll-snap-type: y proximity;
+  scroll-snap-type: y mandatory;
 
   // スクロールバー デコレーション
   &::-webkit-scrollbar {
@@ -73,6 +74,7 @@ body {
     line-height: 1.05;
     letter-spacing: -0.03em;
     margin-bottom: 1.5rem;
+    pointer-events: none;
   }
 
   &__desc {
@@ -121,6 +123,7 @@ body {
     font-weight: 700;
     margin-bottom: 2rem;
     letter-spacing: -0.01em;
+    z-index: 100;// 一応、見えるように
   }
 }// .cg-article <article>
 

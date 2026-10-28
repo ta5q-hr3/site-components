@@ -14,9 +14,13 @@ import ScrollProgressBar from "@/components/ScrollProgressBar.astro"
 import '../styles/componentsGallery.scss';
 
 // ---- Components ----
+// Constellation Dots
 import ConstellationDots from '@/components/ConstellationDots.astro';
 import '@/styles/constellationDots.scss'; // 専用スタイル
 const constellationDotsBg = "radial-gradient(circle at center, #0f173a 0%, #040619 100%)";
+// Magnetic Fluid
+import MagneticFluid from '@/components/MagneticFluid.astro';
+
 
 ---
 
@@ -67,7 +71,7 @@ const constellationDotsBg = "radial-gradient(circle at center, #0f173a 0%, #0406
 <article class="cg-article" data-component="magnetic-fluid">
   <div class="cg-article__inner">
     <h2 class="cg-article__title">02. Magnetic Fluid</h2>
-    <!-- 各コンポーネントをここにマウントする -->Empty yet
+    <MagneticFluid orbColor={brightColor} containerBgColor={darkColor} />
   </div>
 </article>
 

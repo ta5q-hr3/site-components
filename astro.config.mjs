@@ -5,5 +5,18 @@ import react from '@astrojs/react';
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [react()]
+  integrations: [react()],
+  /*
+  vite: {
+    css: {
+      preprocessorOptions: {
+        scss: {
+          additionalData: `
+          @use "/src/styles/_variables.scss" as var;
+          `,
+        }
+      }
+    }
+  }
+  */
 });

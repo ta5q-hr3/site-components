@@ -20,6 +20,9 @@ DOM Structure ...
 
 // <div> wrapper
 .constellation-stage {
+  position: absolute;
+    top:0;
+    left: 0;
   width: 100%;
   height: 100%;
   display: flex;
@@ -39,17 +42,17 @@ DOM Structure ...
     }
   }
 
-  // <div> wrapper
+  // <div> canvas wrapper
   .constellation-canvas-wrapper {
     position: relative;
     width: 100%;
     //height: 380px;
-    height: 80%;
+    height: 100%;
     background: var(--stage-bg, radial-gradient(circle at center, #0a0a20 0%, #000 100%));
-    border-radius: 12px;
+    //border-radius: 12px;
     overflow: hidden;
     cursor: crosshair;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    //border: 1px solid rgba(255, 255, 255, 0.08);
 
     // <canvas>
     .constellation-canvas {
@@ -79,9 +82,10 @@ DOM Structure ...
 }// wrapper .constellation-stage
 
 @media ( width >= 768px ) {
-  // モバイルサイズ時にはラッパーの横幅を制限する
+  // モバイルサイズ時にはラッパーの横幅を制限する?
   .constellation-canvas-wrapper {
-    height: 450px;
+    //height: 450px;
+    height: 100vh;
   }
 
 }
