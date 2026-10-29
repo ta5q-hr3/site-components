@@ -20,7 +20,8 @@ import '@/styles/constellationDots.scss'; // 専用スタイル
 const constellationDotsBg = "radial-gradient(circle at center, #0f173a 0%, #040619 100%)";
 // Magnetic Fluid
 import MagneticFluid from '@/components/MagneticFluid.astro';
-
+// Noise Displacement Text
+import NoiseDisplacement from '@/components/NoiseDisplacement.astro';
 
 ---
 
@@ -56,7 +57,7 @@ import MagneticFluid from '@/components/MagneticFluid.astro';
   -- ------------------------------ -->
 <article class="cg-article" data-component="constellation">
   <div class="cg-article__inner">
-    <h2 class="cg-article__title">01. Interactive Constellation Dots</h2>
+    <h2 class="cg-article__title" data-txt-color="bright">01. Interactive Constellation Dots</h2>
     <ConstellationDots  
       dotColor={brightColor}
       stageBg={constellationDotsBg}
@@ -70,7 +71,7 @@ import MagneticFluid from '@/components/MagneticFluid.astro';
   -- ------------------------------ -->
 <article class="cg-article" data-component="magnetic-fluid">
   <div class="cg-article__inner">
-    <h2 class="cg-article__title">02. Magnetic Fluid</h2>
+    <h2 class="cg-article__title" data-txt-color="bright">02. Magnetic Fluid</h2>
     <MagneticFluid orbColor={brightColor} containerBgColor={darkColor} />
   </div>
 </article>
@@ -80,19 +81,18 @@ import MagneticFluid from '@/components/MagneticFluid.astro';
   -- ------------------------------ -->
 <article class="cg-article" data-component="noise-displacement">
   <div class="cg-article__inner">
-    <h2 class="cg-article__title">03. Noise Displacement Map</h2>
-    <!-- 各コンポーネントをここにマウントする -->Empty yet
+    <h2 class="cg-article__title posi-abs" data-txt-color="dark">03. Noise Displacement Map</h2>
+    <NoiseDisplacement
+      displayText="Distortion Text Component" />
   </div>
 </article>
 
 
-</main>
 
 
+</main><!-- .cg-main -->
 
 </body>
 
 </html>
-
-
 

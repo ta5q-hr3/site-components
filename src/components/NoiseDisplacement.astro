@@ -1,0 +1,153 @@
+---
+/**
+ * NoiseDisplacement.astro
+ - SVGフィルターIDのユニーク化(競合帽子)
+    コンポーネントを複数同時に使用するとフィルターIDが重複する可能性があるので、
+    添付するIDをユニーク化する
+
+ */
+
+interface Props {
+  displayText?: string; // NOISE演出対象テキスト
+  id?: string;// ユニーク化ID
+}
+
+const {
+  displayText = 'NOISY TEXT TITLE',
+  id = 'ns-' + Math.random().toString(36).substring(2, 9)
+} = Astro.props;
+
+---
+
+<!-- Component wrapper .ndStage -->
+<div class="ndStage" data-unique-id={id}>
+  <!--
+  <header><h3 class="title-label">{title}</h3></header>
+   -->
+
+<div class="container">
+
+  <div class="glitch-wrapper">
+    <h1 class="text" style={`filter: url(#noise-filter-${id});`}>{displayText}</h1>
+    <div class="scanlines"></div>
+  </div>
+  <!-- SVG フィルター -->
+  <svg xmlns="http://www.w3.org/2000/svg" class="svg-filters" style="position: absolute; width: 0; height: 0; pointer-events: none;">
+      <defs>
+        <filter id={`noise-filter-${id}`}>
+          <feTurbulence 
+            type="fractalNoise" 
+            baseFrequency="0.05 0.005" 
+            numOctaves="2" 
+            result="noise" 
+          />
+          <feDisplacementMap 
+            in="SourceGraphic" 
+            in2="noise" 
+            scale="0" 
+            xChannelSelector="R" 
+            yChannelSelector="G" 
+          />
+        </filter>
+      </defs>
+    </svg>
+
+</div><!-- .container -->
+
+</div><!-- .ndStage -->
+
+
+<style lang="scss">
+
+@use '../styles/variables' as v;
+
+// Component wrapper
+.ndStage {
+  position: absolute;
+    top:0;
+    left:0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+    flex-direction: column;
+    justify-content: center;
+  /*
+  header {
+    margin-bottom: 1rem;
+    .title-label {
+      font-size: clamp(1.2rem, 2vw, 1.8rem);
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+  }
+  */
+
+// container
+.container {
+  width: 100%;
+  //height: 380px;
+  height: 100%;
+  //background: #050505;
+  background: v.$color-bright;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  //border-radius: 12px;
+  //border: 1px solid rgba(255, 255, 255, 0.08);
+
+  .glitch-wrapper {
+    position: relative;
+    width: 100%;
+    text-align: center;
+    // Noise Distortion Text Element
+    .text {
+      font-family: 'Inter', sans-serif;
+      font-weight: 900;
+      font-size: clamp(3rem, 10vw, 8rem);
+      color: v.$color-dark;
+      letter-spacing: -2px;
+      user-select: none;
+      margin: 0;
+    }
+
+    .scanline {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0) 0px,
+        rgba(0, 0, 0, 0) 1px,
+        rgba(0, 255, 255, 0.03) 2px,
+        rgba(0, 0, 0, 0) 3px
+      );
+      pointer-events: none;
+    }
+  }
+
+}// .container
+
+}// .ndStage
+
+@media ( width <= 768px) {
+  .container {
+    height: 100vh;
+  }
+}
+
+</style>
+
+
+<script>
+
+import { initNoiseDisplacement } from '@/js/noiseDisplacement';
+
+document.addEventListener( 'DOMContentLoaded', () => {
+  const stages = document.querySelectorAll<HTMLElement>('.ndStage');
+  stages.forEach( stage => initNoiseDisplacement(stage) );
+});
+</script>
