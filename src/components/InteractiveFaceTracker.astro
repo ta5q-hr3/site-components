@@ -1,0 +1,192 @@
+---
+import { string } from 'astro:schema';
+
+/**
+ * Interactive Face Tracker
+ * 画面内に要素配置エリアが侵入したときからカーソルの座標を検知して
+ * 対象要素を3次元に変形、カーソルの座標に向けて追従(Tracking)させます
+ * 
+ * Gsap ScrollTrigger を使用して<article>が画面内に侵入したタイミングから演出を開始します
+ * 
+ */
+
+ interface Props {
+  id?: string;
+ }
+
+ const {
+  id = 'ft-' + Math.random().toString(36).substring(2,9)
+ } = Astro.props;
+
+---
+
+
+<div class="trkStage" data-unique-id={id}>
+
+<!--
+<header>
+  <h3 class="title">{title}</h3>
+</header>
+-->
+
+<div class="container" id={`ift-container-${id}`}>
+  <div class="ift-card" id={`ift-card-${id}`}>
+  <!--
+   --  SVG Element --
+   -->
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" class="ift-face-svg">
+    <!-- layer 1  Most Deep  Faceline -->
+    <g id="Faceline" class="ift-layer layer-face" data-name="Faceline" data-depth="10">
+      <path  d="M281.11,102.63c0,47.83-27.42,86.6-131.11,86.6S18.89,150.46,18.89,102.63,77.59,16.03,150,16.03s131.11,38.77,131.11,86.6Z" />
+    </g>
+    <!-- layer 2 Mouse -->
+    <g id="Mouse" class="ift-layer layer-mouse" data-depth="20">
+      <ellipse cx="149.34" cy="120.66" rx="15.88" ry="8.88"/>
+      <path class="cls-1" d="M115.15,129.07c1.97,2.39,5.66,4.89,14.48,4.89,19.05,0,19.72-8.64,19.72-8.64v-5.74"/>
+      <path class="cls-1" d="M184.2,128.97c-1.97,2.39-5.66,4.89-14.48,4.89-19.05,0-19.72-8.64-19.72-8.64"/>
+      <path class="cls-2" d="M124.37,135.17c0,3.58,4.09,8.68,25.63,8.68s25.83-4.3,25.83-9.9"/>
+      <path class="cls-3" d="M130.35,155.44c8.82,8.4,30.18,7.84,39.5,0"/>
+      <path class="cls-5" d="M90.97,181.26c-29.14-22.78-15.86-82.65,61.7-82.65s95.74,62.92,58.94,84.7"/>
+    </g>
+    <!-- layer 3 Eyeline -->
+    <g id="Eyeline" class="ift-layer layer-eye" data-depth="35">
+      <path id="Eyeline-path1" class="cls-4" d="M112.67,93.5c0,13.87-6.15,25.11-29.99,25.11s-29.99-11.24-29.99-25.11h59.99Z"/>
+      <path id="Eyeline-path2" data-name="Eyeline" class="cls-4" d="M246,93.5c0,13.87-6.15,25.11-29.99,25.11s-29.99-11.24-29.99-25.11h59.99Z"/>
+    </g>
+    <!-- layer 4  Most in front  Eyeball -->
+    <g id="EyeBall" class="ift-layer layer-eyeball" data-depth="55">
+      <ellipse id="eyeball" cx="81.18" cy="104.93" rx="12.93" ry="11.43"/>
+      <ellipse id="eyeball-2" data-name="eyeball" cx="217.78" cy="105.51" rx="13.06" ry="12.01"/>
+    </g>
+  </svg>
+
+  </div><!-- .ift-card -->
+</div><!-- .container -->
+
+</div><!-- .trkStage -->
+
+
+<style lang="scss">
+
+@use "../styles/variables" as v;
+
+.trkStage {
+  width: 100%;
+  height: 100%;
+  display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+  header {
+    margin-bottom: 1rem;
+    .title {
+      font-size: clamp( 1.2rem, 2vw, 1.8rem);
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+  }
+
+}
+
+.container {
+  display: flex;
+    justify-content: center;
+    align-items: center;
+  position: absolute;
+    top: 0;
+    left: 0;
+  
+  background: radial-gradient(circle at center, #151934 0%, #040619 100%);
+  overflow: hidden;
+  // 3D空間の視点深度
+  perspective: 1000px;
+
+  .ift-card {
+    display: flex;
+      align-items: center;
+      justify-content: center;
+    width: 80%;
+    max-width: 420px;
+    background: transparent;
+    // 3D回転・変形要素として指定
+    transform-style: preserve-3d;
+
+    .ift-face-svg {
+      width: 100%;
+      height: auto;
+      overflow: visible;
+      filter: drop-shadow( 0 20px 30px rgba(0, 0, 0, 0.4) );
+
+      .ift-layer {
+        transition: transform 0.05s ease-out;
+      }
+    }
+
+    svg {
+      #Faceline {
+        path {
+          fill: transparent;
+          stroke: v.$color-dark;
+          stroke-width: 8;
+          stroke-linejoin: round;
+        }
+      }
+      #Mouse {
+        // Nose
+        ellipse { 
+          fill:v.$color-dark;
+        }
+        path {
+          stroke: v.$color-dark;
+          stroke-linecap: round;
+          fill: none;
+          &.cls-1 {
+            stroke-linejoin: round;
+            stroke-width: 6px;
+          }
+          &.cls-2 {
+            stroke-linejoin: round;
+            stroke-width: 7px;
+          }
+          &.cls-3 {
+            stroke-linejoin: round;
+            stroke-width: 5px;
+          }
+          &.cls-5 {
+            stroke-miterlimit: 10;
+            stroke-width: 6px;
+          }
+        }// #Mouse path
+      }// # Mouse
+      #Eyeline {
+        path {
+          stroke: v.$color-dark;;
+          stroke-linecap: round;
+          stroke-linejoin: round;
+          fill: #fff;
+          stroke-width: 6px;
+        }
+      }//#Eyeline
+      /*#EyeBall {        
+      }*/
+    }// svg
+  }// .ift-card
+}// .container
+
+@media ( width <= 768px ) {
+  .container {
+    height: 100vh;
+  }
+}
+</style>
+
+
+<script>
+import { initFaceTracker } from "@/js/interactiveFaceTracker";
+
+document.addEventListener( 'DOMContentLoaded', () => {
+  const stage = document.querySelector(`[data-unique-id="${id}"]`);
+  if (stage) initFaceTracker(stage);
+});
+
+</script>
