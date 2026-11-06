@@ -1,9 +1,10 @@
-
+/*
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin( ScrollTrigger );
-
+*/
+import { gsap } from './gsap-config';
 
 /**
  * Exported main method
@@ -34,7 +35,7 @@ const tween = gsap.to( animState, {
   ease: 'power3.out', // 減速しながら停止
   scrollTrigger: {
     trigger: stage,
-    markers: true,
+    //markers: true,
     start: 'top 50%',// 画面上端から75%の位置に stage が来たら開始
     toggleActions: 'play none none reverse', // スクロールバックでも実行
   },

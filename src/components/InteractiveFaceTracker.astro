@@ -1,5 +1,5 @@
 ---
-import { string } from 'astro:schema';
+//import { string } from 'astro:schema';
 
 /**
  * Interactive Face Tracker
@@ -21,7 +21,7 @@ import { string } from 'astro:schema';
 ---
 
 
-<div class="trkStage" data-unique-id={id}>
+<div class="trkStage" data-unique-id={id} id={`ift-stage-${id}`}>
 
 <!--
 <header>
@@ -29,7 +29,7 @@ import { string } from 'astro:schema';
 </header>
 -->
 
-<div class="container" id={`ift-container-${id}`}>
+<div class="container" id={`ift-container-${id}`} >
   <div class="ift-card" id={`ift-card-${id}`}>
   <!--
    --  SVG Element --
@@ -68,6 +68,7 @@ import { string } from 'astro:schema';
 
 <style lang="scss">
 
+//@use "@/styles/variables" as v;
 @use "../styles/variables" as v;
 
 .trkStage {
@@ -95,8 +96,12 @@ import { string } from 'astro:schema';
   position: absolute;
     top: 0;
     left: 0;
+
+  width: 100%;
+  height: 100%;
   
-  background: radial-gradient(circle at center, #151934 0%, #040619 100%);
+  //background: radial-gradient(circle at center, #151934 0%, #040619 100%);
+  background-color: v.$color-bright;
   overflow: hidden;
   // 3D空間の視点深度
   perspective: 1000px;
@@ -115,7 +120,7 @@ import { string } from 'astro:schema';
       width: 100%;
       height: auto;
       overflow: visible;
-      filter: drop-shadow( 0 20px 30px rgba(0, 0, 0, 0.4) );
+      //filter: drop-shadow( 0 20px 30px rgba(0, 0, 0, 0.4) );
 
       .ift-layer {
         transition: transform 0.05s ease-out;
@@ -134,7 +139,7 @@ import { string } from 'astro:schema';
       #Mouse {
         // Nose
         ellipse { 
-          fill:v.$color-dark;
+          fill: v.$color-dark;
         }
         path {
           stroke: v.$color-dark;
@@ -181,12 +186,28 @@ import { string } from 'astro:schema';
 </style>
 
 
+<!-- script define:vars={{ id }}
+  define:vars={{ id }} を使用したときに (コンポーネントで)
+  Astro から ブラウザ へ変数譲渡のために変数定義コードをスクリプト最上部(importの前)へ差し込んでしまうため
+  下記構文エラーがでます。
+  Uncaught SyntaxError: import declarations may only appear at top level of a module
+ -->
 <script>
 import { initFaceTracker } from "@/js/interactiveFaceTracker";
 
 document.addEventListener( 'DOMContentLoaded', () => {
-  const stage = document.querySelector(`[data-unique-id="${id}"]`);
-  if (stage) initFaceTracker(stage);
+  //const stage = document.querySelector<HTMLElement>(`[data-unique-id="${id}"]`);
+  //if (stage) {
+  //  initFaceTracker(stage);
+  //}
+  const stages = document.querySelectorAll<HTMLElement>('.trkStage');
+  stages.forEach( stage => {
+    const uniqueId = stage.dataset.uniqueId;
+    if (uniqueId) {
+      initFaceTracker( stage, uniqueId );
+    }
+    //initFaceTracker( stage );
+  });
 });
 
 </script>

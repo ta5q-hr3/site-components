@@ -22,6 +22,8 @@ const constellationDotsBg = "radial-gradient(circle at center, #0f173a 0%, #0406
 import MagneticFluid from '@/components/MagneticFluid.astro';
 // Noise Displacement Text
 import NoiseDisplacement from '@/components/NoiseDisplacement.astro';
+// Interactive Face Tracker
+import InteractiveFaceTracker from '@/components/InteractiveFaceTracker.astro';
 
 ---
 
@@ -41,7 +43,7 @@ import NoiseDisplacement from '@/components/NoiseDisplacement.astro';
 
 <!-- スクロール プログレスインジケーター -->
 <!-- <ScrollProgress total={3} /> -->
-<ScrollProgressBar total={3} />
+<ScrollProgressBar total={4} />
 
 <!-- ページタイトル -->
 <section class="cg-hero">
@@ -84,6 +86,16 @@ import NoiseDisplacement from '@/components/NoiseDisplacement.astro';
     <h2 class="cg-article__title posi-abs" data-txt-color="dark">03. Noise Displacement Map</h2>
     <NoiseDisplacement
       displayText="Distortion Text Component" />
+  </div>
+</article>
+
+<!-- ------------------------------
+  -- Interactive Face Tracker
+  -- ------------------------------ -->
+<article class="cg-article" data-component="face-tracker">
+  <div class="cg-article__inner">
+    <h2 class="cg-article__title" data-txt-color="dark">04. Interactive Tracker</h2>
+    <InteractiveFaceTracker />
   </div>
 </article>
 
