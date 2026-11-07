@@ -24,7 +24,9 @@ import MagneticFluid from '@/components/MagneticFluid.astro';
 import NoiseDisplacement from '@/components/NoiseDisplacement.astro';
 // Interactive Face Tracker
 import InteractiveFaceTracker from '@/components/InteractiveFaceTracker.astro';
-
+// Orbital Timeline
+import OrbitalTimeline from "@/components/OrbitalTimeline.astro";
+import '@/styles/orbitalTimeline.scss';
 ---
 
 <html lang="ja">
@@ -43,7 +45,7 @@ import InteractiveFaceTracker from '@/components/InteractiveFaceTracker.astro';
 
 <!-- スクロール プログレスインジケーター -->
 <!-- <ScrollProgress total={3} /> -->
-<ScrollProgressBar total={4} />
+<ScrollProgressBar total={5} />
 
 <!-- ページタイトル -->
 <section class="cg-hero">
@@ -99,6 +101,15 @@ import InteractiveFaceTracker from '@/components/InteractiveFaceTracker.astro';
   </div>
 </article>
 
+<!-- ------------------------------
+  -- Orbital Timeline
+  -- ------------------------------ -->
+<article class="cg-article" data-component="orbital-timeline">
+  <div class="cg-article__inner">
+    <h2 class="cg-article__title posi-abs" data-txt-color="bright">05. Orbital Timeline</h2>
+    <OrbitalTimeline />
+  </div>
+</article>
 
 
 

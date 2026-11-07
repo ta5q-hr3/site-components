@@ -1,0 +1,72 @@
+---
+/**
+ * Orbital Timeline 
+ * 太陽系の惑星軌道のように、複数のコンテンツやプロジェクトのアイコンが、3D空間上の楕円軌道を描きながら周回する
+ * インタラクティブなナビゲーションです。
+ * マウスドラッグ&スクロールで... 軌道のスピードを変化 / 特定の要素を手前に引き寄せ & フォーカス
+ * 
+ * ソースコードの構成は以下のとおり
+ src/
+  ├── components/
+  │   └── OrbitalTimeline.astro       # マークアップおよびAstroコンポーネント
+  ├── styles/
+  │   └── components/
+  │       └── orbitalTimeline.scss    # スタイルおよび3D空間の視点設定
+  ├── js/
+  │   ├── orbitalMath.ts              # 三角関数による3D座標・スケール・奥行き計算ロジック
+  │   └── orbitalTimeline.ts          # Canvas描画またはDOM制御、マウス/スクロール連動のメイン制御
+  └── pages/
+      └── full-timeline.astro         # （必要に応じた）別ページ化用のフルスクリーン独立ビュー
+ * 
+ * 描画負荷に関して ... Canvas(HTML5 Canvas API)上で描画 DOM操作の描画負荷を回避
+ *    スクロールアウト(画面外)時には処理ループを停止させる
+ * 独立ページへ展開を想定
+ *    計算ロジックのスクリプトを独立ファイル化。実装先ごとに軽量版/フル画面版を切り替え
+ * 
+ */
+
+interface Props {
+  id?: String;
+}
+
+const {
+  id = 'ot-' + Math.random().toString(36).substring(2, 9)
+} = Astro.props
+
+---
+
+
+<div class="orbitalStage" data-unique-id={id} id={`ot-stage-${id}`}>
+
+<!--
+<header><h3 class="title">{title}</h3></header>
+  -->
+
+<div class="container" id={`ot-container-${id}`}>
+
+  <canvas class="canvas" id={`ot-canvas-${id}`}></canvas>
+
+  <div class="overlay-info">
+    <span class="badge">SYSTEM_ACTIVE</span>
+    <p class="instruction">Hover to slow / Scroll to warp</p>
+  </div>
+
+</div><!-- .container -->
+
+
+</div><!-- .srbitalStage -->
+
+
+<script>
+import { initOrbitalTimeline } from '@/js/orbitalTimeline';
+document.addEventListener( 'DOMContentLoaded', () => {
+  const stages = document.querySelectorAll<HTMLElement>('.orbitalStage');
+  stages.forEach( stage => {
+    const uniqueId = stage.dataset.uniqueId;
+    if (uniqueId) {
+      initOrbitalTimeline( stage, uniqueId );
+    }
+  });
+});
+</script>
+
