@@ -1,0 +1,144 @@
+@charset "UTF-8";
+
+@use 'variables' as *;
+
+// <body class="om-body">
+//body.om {
+.om {
+  margin: 0;
+  padding: 0;
+  background: $color-dark;
+  color: $color-bright;
+  font-family: 'Inter', sans-serif;
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;  
+
+  // <main class="om--fullscreen-stage" id="omStage">
+  &--fullscreen-stage {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: radial-gradient(circle at center, #0d1124 0%, #03050f 100%);
+
+    //header.om--header {
+    .om--header {
+      position: absolute;
+      top: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      z-index: 10;
+      pointer-events: none;
+
+      &--tag {
+        font-size: 10px;
+        letter-spacing: 0.3em;
+        color: #4df3ff;
+        background: rgba(77, 243, 255, 0.1);
+        padding: 4px 10px;
+        border-radius: 4px;
+      }
+      &--title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        letter-spacing: 0.15em;
+        margin-top: 10px;
+        margin-bottom: 0;
+      }
+    }// header.om--header
+
+  }// .om--fullscreen-stage
+
+  &--canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+
+  // アクティブなメニューの詳細表示
+  &--active-panel {
+    position: absolute;
+    right: 60px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 300px;
+    background: rgba(13, 17, 36, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 30px;
+    z-index: 10;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+
+    .category {
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      color: #4df3ff;
+    }
+    .title {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin: 8px 0 12px 0;
+      letter-spacing: 0.05em;
+    }
+    .desc {
+      font-size: 0.85rem;
+      opacity: 0.6;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    .action-btn {
+      width: 100%;
+      padding: 12px;
+      background: #fff;
+      color: #03050f;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+      &:hover {
+        background: #4df3ff;
+        transform: translateY(-2px);
+      }
+    }
+
+  }// .om--active-panel 
+
+  &--footer-ui {
+    position: absolute;
+    bottom: 30px;
+    left: 60px;
+    right: 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    opacity: 0.5;
+    z-index: 10;
+
+    .back-link {
+      color: #fff;
+      text-decoration: none;
+      transition: opacity 0.3s;
+      &:hover {
+        opacity: 1; color: #4df3ff;
+      }
+     }
+  }
+
+
+
+
+}// .om <body>
+

@@ -1,0 +1,73 @@
+---
+/**
+ * GUI演出の設計
+ * 1. スクロール連動
+ *    スクロール量に応じて擬似3D軌道の角度(オフセット)を回転させる
+ * 2. 星ノードのタッチ&コントロール
+ *    星ノードにタッチできるメニュー項目機能を付与。z軸の最前面 = 手前の星ノードにフォーカス状態演出を付与
+ * 3. ビューポート全体で表示
+ */
+
+import '@/styles/orbitalMenu.scss'
+//import type { ACTION_QUERY_PARAMS } from 'astro:actions';
+
+---
+
+
+<html lang="ja">
+
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="icon" href="/favicon.ico" />
+<title>Orbital Planetary Menu</title>
+</head>
+<body class="om">
+
+<main class="om--fullscreen-stage" id="omStage">
+
+<header class="om--header">
+  <span class="om--header--tag">Component No.6 | ORBITAL GUI</span>
+  <h1 class="om--header--title">PLANETARY NAVIGATION MENU</h1>
+</header>
+
+<canvas class="om--canvas" id="omCanvas"></canvas>
+
+<!--
+-- アクティブなメニューの詳細表示
+-->
+<div class="om--active-panel" id="omActivePanel">
+  <span class="category">ACTIVE SECTOR</span>
+  <h2 class="title" id="omPanelTitle">PHASE 01</h2>
+  <p class="desc" id="omPanelDesc">Scroll to rotate orbit. Click node to select.</p>
+  <button class="action-btn" id="omActionBtn">ACCESS MODULE</button>
+</div>
+
+<!--
+-- 操作ガイド
+-->
+<footer class="om--footer-ui">
+  <span>[ SCROLL OR WHEEL TO ROTATE ]</span>
+  <a href="/" class="back-link">RETURN TO GALLERY</a>
+</footer>
+
+</main><!-- .--fullscreen-stage #omStage -->
+
+
+<script>
+import { initOrbitalMenu } from '@/js/orbitalMenu';
+
+document.addEventListener( 'DOMContentLoaded', () => {
+  const stage = document.getElementById('omStage');// <main id="omStage">
+  if (stage) {
+    initOrbitalMenu(stage);
+  }
+});
+
+</script>
+
+
+</body>
+
+</html>
