@@ -35,14 +35,27 @@ import '@/styles/orbitalMenu.scss'
 <canvas class="om--canvas" id="omCanvas"></canvas>
 
 <!--
--- アクティブなメニューの詳細表示
+-- 選択中星ノードの ディスプレイ
 -->
+<div class="om--bottom-display" id="omBottomDisplay">
+  <div class="display-content">
+    <span class="category" id="omDisplayCategory">ACTIVE SECTOR</span>
+    <h2 class="title" id="omDisplayTitle">CORE ARCHITECTURE</h2>
+    <p class="desc" id="omDisplayDesc">Foundational framework and modular system design for high-performance web applications.</p>
+    <!-- button class="action-btn" id="omActionBtn">ACCESS MODULE</button -->
+  </div>
+</div>
+
+<!--
+-- アクティブなメニューの詳細表示
+
 <div class="om--active-panel" id="omActivePanel">
   <span class="category">ACTIVE SECTOR</span>
   <h2 class="title" id="omPanelTitle">PHASE 01</h2>
   <p class="desc" id="omPanelDesc">Scroll to rotate orbit. Click node to select.</p>
   <button class="action-btn" id="omActionBtn">ACCESS MODULE</button>
 </div>
+-->
 
 <!--
 -- 操作ガイド

@@ -12,23 +12,40 @@
   font-family: 'Inter', sans-serif;
   overflow: hidden;
   width: 100vw;
-  height: 100vh;  
+  //height: 100vh;
+  height: 100dvh;
 
   // <main class="om--fullscreen-stage" id="omStage">
   &--fullscreen-stage {
     position: relative;
     width: 100vw;
-    height: 100vh;
+    //height: 100vh;
+    height: 100dvh;
     display: flex;
-    justify-content: center;
-    align-items: center;
+      justify-content: center;
+      align-items: center;
     background: radial-gradient(circle at center, #0d1124 0%, #03050f 100%);
+    overflow: hidden;
+
+    // スクロールバー非表示
+    // Firefox用
+    scrollbar-width: none;
+    // Internet Explorer・旧Edge用
+    -ms-overflow-style: none;
+    // Chrome、Safari、新しいEdge用
+    &::-webkit-scrollbar {
+      display: none;
+    }
 
     //header.om--header {
     .om--header {
       position: absolute;
-      top: 40px;
-      left: 50%;
+      //top: 40px;
+        top: 24px;
+        left: 50%;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 0 20px;
       transform: translateX(-50%);
       text-align: center;
       z-index: 10;
@@ -43,7 +60,8 @@
         border-radius: 4px;
       }
       &--title {
-        font-size: 1.5rem;
+        //font-size: 1.5rem;
+        font-size: clamp( 1.1rem, 4vw, 1.5rem);
         font-weight: 700;
         letter-spacing: 0.15em;
         margin-top: 10px;
@@ -54,13 +72,86 @@
   }// .om--fullscreen-stage
 
   &--canvas {
+    display: block;
     position: absolute;
     top: 0;
     left: 0;
+    //width: 100vw;
+    //height: 100vh;
+    //max-width: 100%;
+    //max-height: 100%;
     width: 100%;
-    height: 100%;
+    //height: 100%;
+    height: 100dvh;
     z-index: 1;
   }
+
+  &--bottom-display {
+    position: absolute;
+      bottom: 60px;
+      left: 50%;
+    transform: translateX(-50%);
+    width: 88%;
+    max-width: 440px;
+    background: rgba(13, 17, 36, 0.6);
+    backdrop-filter: blur(12px);
+    //border: 1px solid rgba( 255, 255, 255, 0.1 );
+    border-radius: 12px;
+    box-shadow: 0 20px 40px rgba( 0, 0, 0, 0.5 );
+    padding: 20px 30px;
+    text-align: center;
+    z-index: 10;
+    pointer-events: none;// 惑星軌道よりも前にあっても背後をクリック可能にする
+
+    .display-content{
+      transition: opacity 0.4s ease, transform 0.4s ease;
+      opacity: 1;
+      transform: translateY(0);
+      // 公転(非選択)中状態
+      &.is-animating {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+      .category {
+        font-size: 9px;
+        letter-spacing: 0.3rem;
+        color: #4df3ff;
+      }
+      .title {
+        //font-size: 1.2rem;
+        font-size: clamp( 1rem, 3.5vw, 1.2rem );
+        font-weight: 600;
+        margin: 6px 0 8px 0;
+        letter-spacing: 0.05rem;
+      }
+      .desc {
+        //font-size: 0.8rem;
+        font-size: clamp( 0.75rem, 2.5vw, 0.8rem );
+        opacity: 0.6;
+        line-height: 1.5;
+        margin: 0;
+        padding: 2rem;
+      }
+      .action-btn {
+        width: 100%;
+        padding: 12px;
+        background: #fff;
+        color: #03050f;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        //font-size: 0.8rem;
+        font-size: clamp( 0.75rem, 2.5vw, 0.8rem );
+        letter-spacing: 0.1em;
+        cursor: pointer;
+        transition: background 0.3s, transform 0.2s;
+        &:hover {
+          background: #4df3ff;
+          transform: translateY(-2px);
+        }
+      }
+    }// .display-content{
+  }// .om--bottom-display
 
   // アクティブなメニューの詳細表示
   &--active-panel {
@@ -116,12 +207,12 @@
 
   &--footer-ui {
     position: absolute;
-    bottom: 30px;
-    left: 60px;
-    right: 60px;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+      justify-content: space-between;
+      align-items: center;
     font-size: 10px;
     letter-spacing: 0.2em;
     opacity: 0.5;
