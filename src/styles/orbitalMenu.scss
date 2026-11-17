@@ -82,13 +82,25 @@
     //max-height: 100%;
     width: 100%;
     //height: 100%;
-    height: 100dvh;
+    @media (width >= 801px) {
+      height: 100dvh;
+    }
+    @media (width <= 800px) {
+      height: 80dvh;
+    }
+    //height: 100dvh;
     z-index: 1;
   }
 
   &--bottom-display {
     position: absolute;
-      bottom: 60px;
+      @media ( width >= 801px ) {
+        bottom: 60px;
+      }
+      @media ( width <= 800px ) {
+        bottom: 15%;
+      }
+      //bottom: 60px;
       left: 50%;
     transform: translateX(-50%);
     width: 88%;
