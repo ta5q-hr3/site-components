@@ -35,6 +35,19 @@ import '@/styles/orbitalMenu.scss'
 <canvas class="om--canvas" id="omCanvas"></canvas>
 
 <!--
+-- 自動公転のオン/オフ
+-->
+<button class="om--center-toggle" id="omCenterToggle" aria-label="Toggle Auto Rotation">
+  <svg class="icon play" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+    <polygon points="6,4 20,12 6,20"></polygon>
+  </svg>
+  <svg class="icon pause" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="display: none;">
+    <rect x="6" y="4" width="4" height="16"></rect>
+    <rect x="14" y="4" width="4" height="16"></rect>
+  </svg>
+</button>
+
+<!--
 -- 選択中星ノードの ディスプレイ
 -->
 <div class="om--bottom-display" id="omBottomDisplay">

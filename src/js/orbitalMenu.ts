@@ -65,6 +65,7 @@ const nodes: PlanetNode[] = [
  */
 export function initOrbitalMenu( stage: HTMLElement ) {
 
+
 const canvas = stage.querySelector(`#omCanvas`) as HTMLCanvasElement | null;
 if (!canvas) return;
 const ctx = canvas.getContext(`2d`);//HTMLCanvasElement.CanvasRenderingContext2D ... 2Dで描画するペンのようなもの
@@ -77,11 +78,16 @@ const descEl = stage.querySelector('.desc') as HTMLElement | null;
 //const title = stage.querySelector('#omPanelTitle') as HTMLElement | null;
 //const desc = stage.querySelector('#omPanelDesc') as HTMLElement | null;
 // リンクをつける場合 const actionBtn = stage.querySelector('#omActionBtn') as HTMLElement | null;
+// 自動公転のオンオフボタン
+const toggleBtn = stage.querySelector('#omCenterToggle') as HTMLButtonElement | null;
+const playIcon = toggleBtn?.querySelector('.play') as HTMLElement | null;
+const pauseIcon = toggleBtn?.querySelector('.pause') as HTMLElement | null;
 
 let animationId: number;          // アニメーションフレームID
 let globalRotation = 0;           // 全体の回転状態(角度)  回転に伴って値を蓄積させる(自動で回転させるための値)
 let targetRotation = 0;           // 特定エレメントの軌道(選択項目)の回転状態(角度)  値の回転状態まで進めるための値
 let activeNodeId = nodes[0].id;   // 選択中星ノードのid 初期は先頭のid01
+let isAutoRotation = true;        // 自動公転オンオフ  デフォルト ON:true
 const autoRotationSpeed = 0.001;  // 自動公転スピード
 const scrollRotationAmount = 0.002; // スクロール・ホイールで軌道を回転させる際の角度の増量値
 const swipeRotationAmount = 0.005;  // タッチ操作時に軌道を回転させる角度の増量値
@@ -268,6 +274,25 @@ const handleClick = (e: MouseEvent) => {
   }
 };// handleClick()
 
+// method: 自動公転オンオフボタン
+const handleToggleAutoRotation = ( e: MouseEvent | TouchEvent ) => {
+  e.stopPropagation();// canvasへのクリック判定伝播を防止
+  isAutoRotation = !isAutoRotation;// 自動公転状態フラグの切り替え
+  // アイコンのいずれかを取得
+  if ( playIcon && pauseIcon ) {
+    // 自動公転がオンになった
+    if (isAutoRotation) {
+      playIcon.style.display ='block';
+      pauseIcon.style.display ='none';
+      toggleBtn?.classList.remove('is-paused');
+    } else {
+      playIcon.style.display ='none';
+      pauseIcon.style.display ='block';
+      toggleBtn?.classList.add('is-paused');
+    }
+  }
+}
+
 // --------------------
 
 
@@ -285,8 +310,10 @@ const centerX = w_innerWidth / 2;
 const centerY = isMobile ? w_innerHeight / 2 -60 : w_innerHeight / 2 - 40;
 // 慣性(Lerp)の表現  targetRotationまでの差分を10%(0.1)ずつ近づける...減速しながら止まる
 globalRotation += (targetRotation - globalRotation) * 0.1;
-// 自動公転
-targetRotation += autoRotationSpeed;
+// 自動公転  フラグON のときに公転する
+if (isAutoRotation) {
+  targetRotation += autoRotationSpeed;
+}
 
 ctx.clearRect( 0, 0, w_innerWidth, w_innerHeight );// 前フレームの描画を初期化
 
@@ -366,6 +393,7 @@ sortedNodes.forEach( node => {
 animationId = requestAnimationFrame(render);
 
 };// const render()
+// ----------------------------------------
 
 
 // イベントリスナー付与 (Utility methods)
@@ -376,7 +404,10 @@ window.addEventListener( 'touchstart', handleTouchStart, { passive: true} );
 window.addEventListener( 'touchmove', handleTouchMove, { passive: true } );
 window.addEventListener( 'touchend', handleTouchEnd, { passive: true } );
 canvas.addEventListener( 'click', handleClicker );
-
+if (toggleBtn) {
+  toggleBtn.addEventListener( 'click', handleToggleAutoRotation);
+  toggleBtn.addEventListener( 'touchend', handleToggleAutoRotation);
+}
 
 // ---- 初期化 ----
 resize();

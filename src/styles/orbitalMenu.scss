@@ -92,6 +92,40 @@
     z-index: 1;
   }
 
+  // 自動公転コントロール
+  // <button class="om--center-toggle" id="omCenterToggle"
+  &--center-toggle {
+    display: flex;
+      justify-content: center;
+      align-items: center;
+    position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate( -50%, -190%);
+    width: 44px;
+    height: 44px;
+    background: rgba( 13, 17, 36, 0.8);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba( 77, 243, 255, 0.3 );
+    border-radius: 50%;
+    box-shadow: 0 0 20px rgba( 77, 243, 255, 01.5 );
+    color: $color-bright;
+    cursor: pointer;
+    z-index: 5;
+    transition: all 0.3s cubic-bezier( 0.16, 1, 0.3, 1 );
+
+    &:hover {
+      background: rgba( 77, 243, 255, 0.15 );
+      border-color: $color-bright;
+      box-shadow: 0 0 25px rgba( 77, 243, 255, 0.4);
+      transform: translate(-50%, -200%) scale(1.08);
+    }
+    &:active {
+      transform: translate(-50%, -200%) scale(0.95);
+    }
+  }
+
+  // 詳細表示
   &--bottom-display {
     position: absolute;
       @media ( width >= 801px ) {
