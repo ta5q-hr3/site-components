@@ -1,0 +1,52 @@
+---
+// TextMotionB.
+// Magnetic Deform Characters
+// 磁気の影響を受けて文字が変形する演出
+
+import '@/styles/magneticDeformCharacters.scss';
+---
+
+<html lang="ja">
+
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="icon" href="/favicon.ico" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap" rel="stylesheet">
+<title>Magnetic Deform Characters</title>
+</head>
+
+<body class="mdc-body">
+
+  <div class="mdc-stage">
+
+    <!-- WebGLを描画するキャンバスの土台 -->
+    <div id="webgl-container" class="mdc-canvas-container"></div>
+
+    <!-- ヘッダー・ナビゲーションUI -->
+    <header class="mdc-header">
+      <span class="mdc-tag">EXPERIMENT 02</span>
+      <h1 class="mdc-title">MAGNETIC DEFORM CHARACTERS</h1>
+    </header>    
+
+    <!-- フッター・戻るリンク -->
+    <footer class="mdc-footer">
+      <a href="/" class="mdc-back-link">← BACK TO INDEX</a>
+      <span class="mdd-status">SCROLL & MOVE MOUSE</span>
+    </footer>
+
+  </div><!-- .mdc-stage -->
+
+
+<script>
+  import '@/js/magneticDeformCharacters';
+</script>
+
+
+</body>
+
+</html>
+

@@ -1,5 +1,5 @@
 {
-  "name": "",
+  "name": "site-components",
   "type": "module",
   "version": "0.0.1",
   "engines": {
@@ -19,7 +19,8 @@
     "gsap": "^3.15.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
-    "sass": "^1.104.0"
+    "sass": "^1.104.0",
+    "three": "^0.187.0"
   },
   "allowScripts": {
     "esbuild": true,
@@ -30,6 +31,7 @@
     "@astrojs/check": "^0.9.12",
     "@types/animejs": "^3.1.13",
     "@types/flubber": "^0.4.0",
+    "@types/three": "^0.187.0",
     "typescript": "^6.0.3"
   }
 }
